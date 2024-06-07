@@ -13,7 +13,7 @@ const Home = () => {
                     <div className="title w-full mb-16">
                         <h1 className="text-white text-[36px] font-bold text-center">World Galleries</h1>
                     </div>
-                    <div className="worldview grid grid-cols-3 w-full gap-10">
+                    <div className="worldview grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 w-full gap-10">
                         {worldData.map((item, key) =>
                             <Link key={key} href={`/world/${item.path}`}>
                                 <div
