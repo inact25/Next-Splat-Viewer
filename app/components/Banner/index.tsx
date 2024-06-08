@@ -1,14 +1,20 @@
 "use client"
 import React, {useState} from 'react';
 import Link from "next/link";
+import Image from "next/image"
 
 const Index = ({title, description}:any) => {
     const [value, setValue] = useState('')
 
     return (
         <section className="bg-gray-900 text-white">
-            <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center">
-                <div className="mx-auto max-w-3xl text-center">
+            <div
+                className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:flex-wrap lg:h-screen lg:items-center justify-center">
+                <div>
+                    <div className='w-full mb-5'>
+                        <Image className='m-auto' width={150} height={50} src='/logo.png' alt=""/>
+                    </div>
+                    <div className="mx-auto max-w-3xl text-center w-full">
                     <h1
                         className="pb-5 bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 bg-clip-text text-3xl font-extrabold text-transparent sm:text-5xl"
                     >
@@ -46,6 +52,7 @@ const Index = ({title, description}:any) => {
                             View in Another Vision
                         </Link>
                     </div>
+                </div>
                 </div>
             </div>
         </section>
