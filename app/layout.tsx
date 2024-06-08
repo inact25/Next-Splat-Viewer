@@ -5,6 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  icons:'/ico.png',
   title: "VISIONSHIFT",
   description: "Experience your world in a whole new light.",
 };
