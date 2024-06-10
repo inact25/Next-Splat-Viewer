@@ -16,6 +16,11 @@ const worldData = [
         world: 'https://files.ciptadusa.com/common-bucket/tsag.splat',
         title: 'tsag',
         path: 'tsag'
+    }, {
+        thumbnail: 'https://www.bhg.com/thmb/LrCakiEVtRCyslgobTNlo-suVMk=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/BHG-spider-plant-c0e0fdd5ec6e4c1588998ce3167f6579.jpg',
+        world: 'https://ik.imagekit.io/pixapixa/visionshift/plant4-iso-V3-PS_qs83NnS_F.splat?updatedAt=1718041683238',
+        title: 'plant4',
+        path: 'plant4'
     }
 ]
 export {worldData}
