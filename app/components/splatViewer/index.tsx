@@ -25,7 +25,7 @@ const Index: React.FC<Props> = ({src, scale = 3, position = [0, 0, 0], rotation 
                 :
                 <Splat
                     scale={3}
-                    position={[0, 0, 0]}
+                    position={[0, -5, 0]}
                     // rotation={[0, 0, 0]}
                     src={src ?? ''}
                 />
