@@ -21,6 +21,16 @@ const worldData = [
         world: 'https://ik.imagekit.io/pixapixa/visionshift/plant4-iso-V3-PS_qs83NnS_F.splat?updatedAt=1718041683238',
         title: 'plant4',
         path: 'plant4'
+    }, {
+        thumbnail: 'https://www.bhg.com/thmb/LrCakiEVtRCyslgobTNlo-suVMk=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/BHG-spider-plant-c0e0fdd5ec6e4c1588998ce3167f6579.jpg',
+        world: 'https://ik.imagekit.io/duwu173yg/vett-iso-V3-PS.splat?updatedAt=1718270308187',
+        title: 'plant3',
+        path: 'plant3'
+    }, {
+        thumbnail: 'https://www.bhg.com/thmb/LrCakiEVtRCyslgobTNlo-suVMk=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/BHG-spider-plant-c0e0fdd5ec6e4c1588998ce3167f6579.jpg',
+        world: 'https://ik.imagekit.io/duwu173yg/plant2-iso-V3-PS.splat?updatedAt=1718270421545',
+        title: 'plant2',
+        path: 'plant2'
     }
 ]
 export {worldData}
