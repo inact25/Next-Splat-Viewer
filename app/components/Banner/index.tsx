@@ -1,11 +1,13 @@
 "use client"
 import React, {useState} from 'react';
-import Link from "next/link";
 import Image from "next/image"
+import {useRouter} from 'next/navigation';
 
 const Index = ({title, description}:any) => {
     const [value, setValue] = useState('')
 
+
+    const router = useRouter()
     return (
         <section className="bg-gray-900 text-white">
             <div
@@ -45,12 +47,15 @@ const Index = ({title, description}:any) => {
   </span>
                         </label>
 
-                        <Link
+                        <button
                             className="block mt-5 w-full rounded border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-auto"
-                            href={'/generate/'+ btoa(value)}
+                            onClick={() => {
+                                localStorage.setItem('atob', value)
+                                router.push('/generate/' + btoa(value))
+                            }}
                         >
                             View in Another Vision
-                        </Link>
+                        </button>
                     </div>
                 </div>
                 </div>
