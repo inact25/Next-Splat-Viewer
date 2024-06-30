@@ -11,7 +11,7 @@ const Page = () => {
     return (
         <Canvas
             dpr={[1.5, 2]}
-            camera={{position: [50, 5, -10], fov: 45, near: 1, far: 300}}
+            camera={{position: [50, 5, -10], fov: 45, near: 1, far: 400}}
         >
             <SplatViewer src={decrypted}/>
 
