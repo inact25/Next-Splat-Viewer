@@ -31,6 +31,12 @@ const worldData = [
         world: 'https://ik.imagekit.io/duwu173yg/plant2-iso-V3-PS.splat?updatedAt=1718270421545',
         title: 'plant2',
         path: 'plant2'
+    },
+    {
+        thumbnail: 'https://www.bhg.com/thmb/LrCakiEVtRCyslgobTNlo-suVMk=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/BHG-spider-plant-c0e0fdd5ec6e4c1588998ce3167f6579.jpg',
+        world: 'https://ik.imagekit.io/duwu173yg/gs_Kamin.splat?updatedAt=1719842757504',
+        title: 'toni',
+        path: 'toni'
     }
 ]
 export {worldData}
