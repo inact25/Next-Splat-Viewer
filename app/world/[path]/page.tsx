@@ -8,7 +8,7 @@ import {useParams} from "next/navigation";
 
 const Page = () => {
     const params = useParams()
-    const source = worldData.find(item => item.path === params.path)?.world as string
+    const source = worldData?.find(item => item.path === params.path)?.world as string
     return (
         <Canvas
             dpr={[1.5, 2]}

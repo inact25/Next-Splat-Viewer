@@ -7,7 +7,7 @@ import {useParams} from "next/navigation";
 
 const Page = () => {
     const params = useParams()
-    const decrypted = atob(params.path as string)
+    const decrypted = localStorage.getItem('atob') ||  atob(params.path as string)
     return (
         <Canvas
             dpr={[1.5, 2]}
