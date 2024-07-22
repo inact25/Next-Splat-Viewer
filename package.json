@@ -9,10 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/nextjs-registry": "^1.0.0",
     "@mkkellogg/gaussian-splats-3d": "^0.4.3",
     "@react-three/drei": "^9.106.0",
     "@react-three/fiber": "^8.16.8",
     "@types/three": "^0.165.0",
+    "antd": "^5.19.3",
+    "axios": "^1.7.2",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
