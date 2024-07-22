@@ -1,13 +1,13 @@
 import { API_URL } from '@/app/constant/config';
 
-type CommonResponse<T> = {
+export type CommonResponse<T> = {
   success: boolean;
   message: string;
   responseObject: T;
   statusCode: number;
 };
 
-type ListFilesResponse = {
+export type ListFilesResponse = {
   id: number;
   created_at: string;
 };
