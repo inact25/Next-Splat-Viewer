@@ -20,6 +20,8 @@ export const listFiles = async (): Promise<
 };
 
 export const getFile = async (id: string): Promise<CommonResponse<string>> => {
-  const response = await fetch(`${API_URL}/file/link/${id}`);
+  const response = await fetch(`${API_URL}/file/link/${id}`, {
+    cache: 'no-cache',
+  });
   return await response.json();
 };
