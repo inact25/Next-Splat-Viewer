@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useState } from 'react';
 import * as GaussianSplats3D from '@mkkellogg/gaussian-splats-3d';
 import { Camera } from 'three';
