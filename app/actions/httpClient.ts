@@ -2,19 +2,21 @@
 import axios from 'axios';
 import { CommonResponse, ListFilesResponse } from '@/app/actions/http';
 
-const httpClient = (baseUrl: string) => {
+const httpClient = (baseUrl: string, token?: string) => {
   const axiosClient = axios.create({
     baseURL: baseUrl,
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${(token ?? typeof localStorage !== 'undefined') ? localStorage.getItem('token') : ''}`,
     },
   });
   axiosClient.interceptors.response.use(
     (response) => response,
     (error) => {
       if (error.response.status === 401) {
-        localStorage.removeItem('token');
+        if (typeof localStorage !== 'undefined') {
+          localStorage.removeItem('token');
+        }
         window.location.href = '/admin';
       }
       return Promise.reject(error);
