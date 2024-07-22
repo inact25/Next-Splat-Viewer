@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 
 const GaussianSplat = dynamic(() => import('@/app/components/GaussianSplat'), {
   ssr: false,
-  loading: () => <div>Loading...</div>,
+  // loading: false,
 });
 const Page = async (props: any) => {
   const { params } = props;
