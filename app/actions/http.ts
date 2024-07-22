@@ -15,7 +15,9 @@ type ListFilesResponse = {
 export const listFiles = async (): Promise<
   CommonResponse<ListFilesResponse[]>
 > => {
-  const response = await fetch(`${API_URL}/file/list`);
+  const response = await fetch(`${API_URL}/file/list`, {
+    cache: 'no-cache',
+  });
   return await response.json();
 };
 
