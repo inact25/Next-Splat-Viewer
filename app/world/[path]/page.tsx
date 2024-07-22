@@ -1,6 +1,12 @@
 import React from 'react';
 import { getFile } from '@/app/actions/http';
 import dynamic from 'next/dynamic';
+import type { Metadata } from 'next'
+ 
+export const metadata: Metadata = {
+  title: 'Greenview - Viewer ',
+  description: 'Greenview - Viewer',
+}
 
 const GaussianSplat = dynamic(() => import('@/app/components/GaussianSplat'), {
   ssr: false,
