@@ -10,6 +10,9 @@ export type CommonResponse<T> = {
 export type ListFilesResponse = {
   id: number;
   created_at: string;
+  thumbnail?: string;
+  title?: string;
+  descriptions?: string;
 };
 
 export const listFiles = async (): Promise<
