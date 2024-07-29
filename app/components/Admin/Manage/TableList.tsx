@@ -52,11 +52,21 @@ const TableList = ({ url }: any) => {
       key: 'id',
     },
     {
-      title: 'File Name',
-      dataIndex: 'id',
-      key: 'file',
+      title: 'Title',
+      dataIndex: 'title',
+      key: 'title',
+    },
+    {
+      title: 'Description',
+      dataIndex: 'descriptions',
+      key: 'descriptions',
+    },
+    {
+      title: 'Thumbnail',
+      dataIndex: 'thumbnail',
+      key: 'thumbnail',
       render: (text: string) => {
-        return `File-${text}`;
+        return <img src={text} alt={text} style={{ width: 100 }} />;
       },
     },
     {
@@ -104,6 +114,10 @@ const TableList = ({ url }: any) => {
         dataSource={listSplat}
         loading={loading}
         rowKey={(record) => record.id.toString()}
+        scroll={{
+          x: 768,
+        }}
+        pagination={false}
       />
       <Modal
         title="Add Splat"

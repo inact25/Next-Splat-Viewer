@@ -4,12 +4,12 @@ import Banner from '@/app/components/Banner';
 import Link from 'next/link';
 import Image from 'next/image';
 import { listFiles } from '@/app/actions/http';
-import type { Metadata } from 'next'
- 
+import type { Metadata } from 'next';
+
 export const metadata: Metadata = {
   title: 'Greenview - Viewer ',
   description: 'Greenview - Viewer',
-}
+};
 
 const Home = async () => {
   const response = await listFiles();
@@ -34,11 +34,16 @@ const Home = async () => {
                 <div className="card p-3 border border-gray-800 rounded-2xl">
                   <img
                     className="rounded-2xl object-cover h-[450px]"
-                    src={`https://picsum.photos/800/450`}
+                    src={
+                      item.thumbnail
+                        ? item.thumbnail
+                        : 'https://via.placeholder.com/800x600'
+                    }
                     alt="thumb"
                   />
                   <div className="caption text-[14px] text-white text-center mt-4">
-                    Splat File {item.id}
+                    <h2 className="font-bold">{item.title}</h2>
+                    <p>{item.descriptions}</p>
                   </div>
                 </div>
               </Link>
