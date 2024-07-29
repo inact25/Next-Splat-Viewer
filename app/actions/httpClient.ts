@@ -37,11 +37,42 @@ const httpClient = (baseUrl: string, token?: string) => {
       .post('/auth/login', data)
       .then((response) => response.data);
   };
+  const editFile = async (
+    id: number,
+    file: any | null,
+    thumbnail: any | null,
+    title: string,
+    descriptions: string,
+  ): Promise<CommonResponse<ListFilesResponse>> => {
+    const formData = new FormData();
+    if (file) formData.append('file', file);
+    if (thumbnail) formData.append('thumbnail', thumbnail);
+    formData.append('title', title);
+    formData.append('descriptions', descriptions);
+    return axiosClient
+      .put(`/file/upload/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then((response) => response.data);
+  };
+  const removeFile = async (id: number): Promise<CommonResponse<string>> => {
+    return axiosClient
+      .delete(`/file/upload/${id}`)
+      .then((response) => response.data);
+  };
   const uploadFile = async (
     file: any,
+    thumbnail: any,
+    title: string,
+    descriptions: string,
   ): Promise<CommonResponse<ListFilesResponse>> => {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('thumbnail', thumbnail);
+    formData.append('title', title);
+    formData.append('descriptions', descriptions);
     return axiosClient
       .post('/file/upload', formData, {
         headers: {
@@ -57,6 +88,8 @@ const httpClient = (baseUrl: string, token?: string) => {
     uploadFile,
     listFiles,
     login,
+    removeFile,
+    editFile,
   };
 };
 

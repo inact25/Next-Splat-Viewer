@@ -3,42 +3,75 @@
 import httpClient from '@/app/actions/httpClient';
 import { ListFilesResponse } from '@/app/actions/http';
 import { useEffect, useState } from 'react';
-import { Button, Card, message, Modal, Table, Upload, UploadProps } from 'antd';
-import { CloudUploadOutlined } from '@ant-design/icons';
+import {
+  Button,
+  Card,
+  Form,
+  Input,
+  message,
+  Modal,
+  Space,
+  Table,
+  Upload,
+  UploadProps,
+} from 'antd';
+import {
+  CloudUploadOutlined,
+  DeleteFilled,
+  EditFilled,
+} from '@ant-design/icons';
 
 const { Dragger } = Upload;
 const TableList = ({ url }: any) => {
+  const [form] = Form.useForm();
+  const [editForm] = Form.useForm();
+  const [editingFile, setEditingFile] = useState<ListFilesResponse | null>(
+    null,
+  );
   const props: UploadProps = {
     name: 'file',
     multiple: false,
     headers: {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
-    action: `${url}/file/upload`,
-    onChange(info) {
-      const { status } = info.file;
-      if (status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
-      if (status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully.`);
-        handleRefetch();
-        setShowModal(false);
-      } else if (status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-    onDrop(e) {
-      console.log('Dropped files', e.dataTransfer.files);
-    },
     beforeUpload(file) {
       const isLt20M = file.size / 1024 / 1024 <= 20;
       if (!isLt20M) {
-        message.error('File must smaller than 20MB!');
+        message.error('File must be smaller than 20MB!');
       }
       return isLt20M;
     },
-    accept: '.splat',
+    // accept: '.splat',
+  };
+  const handleRemove = async (id: number) => {
+    try {
+      setLoading(true);
+      const response = await http.removeFile(id);
+      message.success('File removed successfully');
+      handleRefetch();
+    } catch (error) {
+      message.error('File remove failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleUpload = async (values: any) => {
+    try {
+      setLoading(true);
+      const response = await http.uploadFile(
+        values.file[0].originFileObj,
+        values.thumbnail[0].originFileObj,
+        values.title,
+        values.descriptions,
+      );
+      message.success('File uploaded successfully');
+      handleRefetch();
+      setShowModal(false);
+    } catch (error) {
+      message.error('File upload failed');
+    } finally {
+      setLoading(false);
+    }
   };
   const http = httpClient(url);
   const [listSplat, setListSplat] = useState<ListFilesResponse[]>([]);
@@ -77,9 +110,48 @@ const TableList = ({ url }: any) => {
         return new Date(text).toLocaleDateString();
       },
     },
+
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (text: string, record: ListFilesResponse) => (
+        <Space direction="horizontal">
+          <Button
+            icon={<EditFilled />}
+            onClick={() => setEditingFile(record)}
+          />
+          <Button
+            danger
+            icon={<DeleteFilled />}
+            onClick={() => handleRemove(record.id)}
+          />
+        </Space>
+      ),
+    },
   ];
   const handleRefetch = () => {
     setRefetch(!refetch);
+  };
+
+  const handleEdit = async (values: any) => {
+    if (!editingFile) return;
+    try {
+      setLoading(true);
+      const response = await http.editFile(
+        editingFile.id,
+        values.file ? values.file[0].originFileObj : null,
+        values.thumbnail ? values.thumbnail[0].originFileObj : null,
+        values.title,
+        values.descriptions,
+      );
+      message.success('File edited successfully');
+      handleRefetch();
+      setEditingFile(null);
+    } catch (error) {
+      message.error('File edit failed');
+    } finally {
+      setLoading(false);
+    }
   };
   const loadList = async () => {
     setLoading(true);
@@ -98,8 +170,13 @@ const TableList = ({ url }: any) => {
     loadList();
   }, [refetch]);
   useEffect(() => {
-    console.log(listSplat);
-  }, [listSplat]);
+    if (editingFile) {
+      editForm.setFieldsValue({
+        title: editingFile.title,
+        descriptions: editingFile.descriptions,
+      });
+    }
+  }, [editingFile]);
   return (
     <Card
       title="Manage Splat"
@@ -125,17 +202,123 @@ const TableList = ({ url }: any) => {
         onCancel={() => setShowModal(false)}
         footer={null}
       >
-        <Dragger {...props}>
-          <p className="ant-upload-drag-icon">
-            <CloudUploadOutlined />
-          </p>
-          <p className="ant-upload-text">
-            Click or drag file to this area to upload
-          </p>
-          <p className="ant-upload-hint">
-            Accept only .splat file and file size must be smaller than 20MB
-          </p>
-        </Dragger>
+        <Form form={form} onFinish={handleUpload}>
+          <Form.Item
+            name="file"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e.fileList}
+          >
+            <Dragger {...props}>
+              <p className="ant-upload-drag-icon">
+                <CloudUploadOutlined />
+              </p>
+              <p className="ant-upload-text">
+                Click or drag file to this area to upload
+              </p>
+              <p className="ant-upload-hint">
+                Accept only .splat file and file size must be smaller than 20MB
+              </p>
+            </Dragger>
+          </Form.Item>
+          <Form.Item
+            name="thumbnail"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e.fileList}
+          >
+            <Dragger {...props}>
+              <p className="ant-upload-drag-icon">
+                <CloudUploadOutlined />
+              </p>
+              <p className="ant-upload-text">
+                Click or drag thumbnail to this area to upload
+              </p>
+              <p className="ant-upload-hint">
+                Accept only image files and file size must be smaller than 20MB
+              </p>
+            </Dragger>
+          </Form.Item>
+          <Form.Item
+            name="title"
+            rules={[{ required: true, message: 'Please input the title!' }]}
+          >
+            <Input placeholder="Title" />
+          </Form.Item>
+          <Form.Item
+            name="descriptions"
+            rules={[
+              { required: true, message: 'Please input the descriptions!' },
+            ]}
+          >
+            <Input.TextArea placeholder="Descriptions" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              Upload
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title="Edit Splat"
+        open={!!editingFile}
+        onCancel={() => setEditingFile(null)}
+        footer={null}
+      >
+        <Form form={editForm} onFinish={handleEdit}>
+          <Form.Item
+            name="file"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e.fileList}
+          >
+            <Dragger {...props}>
+              <p className="ant-upload-drag-icon">
+                <CloudUploadOutlined />
+              </p>
+              <p className="ant-upload-text">
+                Click or drag file to this area to upload
+              </p>
+              <p className="ant-upload-hint">
+                Accept only .splat file and file size must be smaller than 20MB
+              </p>
+            </Dragger>
+          </Form.Item>
+          <Form.Item
+            name="thumbnail"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e.fileList}
+          >
+            <Dragger {...props}>
+              <p className="ant-upload-drag-icon">
+                <CloudUploadOutlined />
+              </p>
+              <p className="ant-upload-text">
+                Click or drag thumbnail to this area to upload
+              </p>
+              <p className="ant-upload-hint">
+                Accept only image files and file size must be smaller than 20MB
+              </p>
+            </Dragger>
+          </Form.Item>
+          <Form.Item
+            name="title"
+            rules={[{ required: true, message: 'Please input the title!' }]}
+          >
+            <Input placeholder="Title" />
+          </Form.Item>
+          <Form.Item
+            name="descriptions"
+            rules={[
+              { required: true, message: 'Please input the descriptions!' },
+            ]}
+          >
+            <Input.TextArea placeholder="Descriptions" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              Save
+            </Button>
+          </Form.Item>
+        </Form>
       </Modal>
     </Card>
   );
