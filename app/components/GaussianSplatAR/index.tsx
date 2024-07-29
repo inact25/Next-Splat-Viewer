@@ -25,15 +25,11 @@ export default function GaussianSplatAR({
     const viewer = new GaussianSplats3D.Viewer({
       initialCameraLookAt: [0.20786, -0.68154, -0.27311],
       webXRMode: GaussianSplats3D.WebXRMode.AR,
-      rootElement: rootElement,
-      sharedMemoryForWorkers: false,
     });
 
     viewer
       .addSplatScene(src, {
         position: [0, 2.5, 0],
-        streamView: true,
-        showLoadingUI: true,
         rotation: new Quaternion()
           .setFromUnitVectors(
             new Vector3(0.01933, -0.7583, -0.65161).normalize(),
