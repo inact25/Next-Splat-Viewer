@@ -2,16 +2,15 @@
 import React, { useEffect, useState } from 'react';
 import * as GaussianSplats3D from '@mkkellogg/gaussian-splats-3d';
 import { Camera, Quaternion, Vector3 } from 'three';
+import useAccelerometer from '@/hooks/useAccelerometer';
+import Permissions from '@/app/components/Permissions';
 
-export default function GaussianSplatAR({
-  src,
-}: {
-  src: string;
-  camera?: Camera;
-}) {
+function GaussianSplatAR({ src }: { src: string; camera?: Camera }) {
   const [rootElementId] = useState(
     `gaussian-splat-viewer-${Math.random().toString(36).substring(2)}`,
   );
+
+  const accelerometer = useAccelerometer();
 
   useEffect(() => {
     const rootElement = document.getElementById(rootElementId);
@@ -49,3 +48,18 @@ export default function GaussianSplatAR({
 
   return <div className="h-full w-full" id={rootElementId}></div>;
 }
+
+const GaussianSplatARContainer = ({
+  src,
+}: {
+  src: string;
+  camera?: Camera;
+}) => {
+  return (
+    <Permissions>
+      <GaussianSplatAR src={src} />
+    </Permissions>
+  );
+};
+
+export default GaussianSplatARContainer;
