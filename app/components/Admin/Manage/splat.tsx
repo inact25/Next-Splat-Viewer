@@ -108,7 +108,7 @@ const Splat = ({url}: any) => {
       },
     },
     {
-      title: 'Copy Embed Url',
+      title: 'Embed Url',
       dataIndex: 'created_at',
       key: 'created_at',
       render: (text: string, record:any) => <Button onClick={() => {
@@ -118,6 +118,19 @@ const Splat = ({url}: any) => {
           message.error('Could not copy text: ', err);
         });
       }}>Copy Embeded Url</Button>
+    },
+    {
+      title: 'Embed Script',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (text: string, record:any) => <Button onClick={() => {
+        const textToCopy = `<iframe src="${window.location.hostname}/world/${companyToken}/${record.id}.splat" title="${record.title}"></iframe>`;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          message.success('Copied to Clipboard');
+        }).catch(err => {
+          message.error('Could not copy text: ', err);
+        });
+      }}>Copy Embeded Script</Button>
     },
 
     {
