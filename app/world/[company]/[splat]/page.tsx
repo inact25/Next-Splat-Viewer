@@ -1,8 +1,7 @@
 import React from 'react';
-import { getFile } from '@/app/actions/http';
 import dynamic from 'next/dynamic';
-import type { Metadata } from 'next'
- 
+import type {Metadata} from 'next'
+
 export const metadata: Metadata = {
   title: 'Greenview - Viewer ',
   description: 'Greenview - Viewer',
@@ -14,16 +13,13 @@ const GaussianSplat = dynamic(() => import('@/app/components/GaussianSplat'), {
 });
 const Page = async (props: any) => {
   const { params } = props;
-  console.log(`https://api-gv.ciptadusa.com/bridge/${params.company}/${params.splat}`)
-  // const id = params.path as string;
-  try {
-    // const loadFile = await getFile(id);
+  if (typeof params.splat === 'string' && params.splat.includes(".splat")) {
     return (
-      <>
-        <GaussianSplat src={`https://api-gv.ciptadusa.com/bridge/${params.company}/${params.splat}`} />
-      </>
+        <>
+          <GaussianSplat src={`https://api-gv.ciptadusa.com/bridge/${params.company}/${params.splat}`}/>
+        </>
     );
-  } catch (error) {
+  } else {
     return <div>Failed to load file</div>;
   }
 };
