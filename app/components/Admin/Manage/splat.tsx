@@ -11,6 +11,7 @@ const Splat = ({url}: any) => {
   const [form] = Form.useForm();
   const [editForm] = Form.useForm();
   const [companyId, setCompanyId] = useState(0)
+  const [companyToken, setCompanyToken] = useState(0)
   const [editingFile, setEditingFile] = useState<ListFilesResponse | null>(
     null,
   );
@@ -110,7 +111,7 @@ const Splat = ({url}: any) => {
       dataIndex: 'created_at',
       key: 'created_at',
       render: (text: string, record:any) => <Button onClick={() => {
-        navigator.clipboard.writeText(`${process.env.API_URL}/bridge/${record.company_id}/${record.storage_id}`).then(() => {
+        navigator.clipboard.writeText(`${process.env.API_URL}/bridge/${companyToken}/${record.storage_id}.splat`).then(() => {
           message.success('Copied to Clipboard');
         }).catch(err => {
           message.error('Could not copy text: ', err);
@@ -177,6 +178,7 @@ const Splat = ({url}: any) => {
   };
   const loadList = async (body: any) => {
     setCompanyId(body?.company_id)
+    setCompanyToken(body?.company_token)
     setLoading(true);
     try {
       const response = await http.listSplat({...params, ...body});
@@ -206,7 +208,9 @@ const Splat = ({url}: any) => {
       <>
         <Select
             style={{marginBottom: 16}}
-            onChange={(e) => loadList({company_id: e})}
+            onChange={(e) => {
+              loadList({company_id: e, company_token: listCompany?.find(data => data.id === e)?.token})
+            }}
             placeholder={"Select Company"}
             options={listCompany?.map((item: any) => {
               return {label: item.name, value: item.id}
