@@ -105,6 +105,18 @@ const Splat = ({url}: any) => {
         return new Date(text).toLocaleDateString();
       },
     },
+    {
+      title: 'Copy Embed Url',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (text: string, record:any) => <Button onClick={() => {
+        navigator.clipboard.writeText(`${process.env.API_URL}/bridge/${record.company_id}/${record.storage_id}`).then(() => {
+          message.success('Copied to Clipboard');
+        }).catch(err => {
+          message.error('Could not copy text: ', err);
+        });
+      }}>Copy Embeded Url</Button>
+    },
 
     {
       title: 'Actions',
