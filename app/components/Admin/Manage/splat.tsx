@@ -112,7 +112,7 @@ const Splat = ({url}: any) => {
       dataIndex: 'created_at',
       key: 'created_at',
       render: (text: string, record:any) => <Button onClick={() => {
-        navigator.clipboard.writeText(`${window.location.hostname}/world/${companyToken}/${record.id}.splat`).then(() => {
+        navigator.clipboard.writeText(`https://${window.location.hostname}/world/${companyToken}/${record.id}.splat`).then(() => {
           message.success('Copied to Clipboard');
         }).catch(err => {
           message.error('Could not copy text: ', err);
