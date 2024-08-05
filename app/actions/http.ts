@@ -12,7 +12,7 @@ export type ListFilesResponse = {
   created_at: string;
   thumbnail?: string;
   title?: string;
-  descriptions?: string;
+  description?: string;
 };
 
 export type ListCompaniesResponse = {

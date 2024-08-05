@@ -72,6 +72,17 @@ const httpClient = (baseUrl: string, token?: string) => {
   }
 
 
+  type editSplatProps = {
+    storage_id: number,
+    id?: number,
+    title: any | null,
+    description: any | null,
+    thumbnail_id: any | null,
+    company_id: number,
+
+  }
+
+
   const removeFile = async (id: number): Promise<CommonResponse<string>> => {
     return axiosClient
       .delete(`/file/upload/${id}`)
@@ -110,8 +121,6 @@ const httpClient = (baseUrl: string, token?: string) => {
       }
     })
   }
-
-
   const fileUploader = async (file: any) => {
     const data = new FormData()
     data.append("file", file)
@@ -123,6 +132,42 @@ const httpClient = (baseUrl: string, token?: string) => {
         .then((response) => response.data)
   }
 
+  //NEW SPLAT
+  const createSplat = async (body: editSplatProps) => {
+    return axiosClient
+        .post(`/splat/create`, body, {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+        .then((response) => response.data);
+  };
+  const editSplat = async (body: editSplatProps) => {
+    return axiosClient
+        .put(`/splat/update/${body.id}`, body, {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+        .then((response) => response.data);
+  };
+  const removeSplat = async (id: number): Promise<CommonResponse<string>> => {
+    return axiosClient
+        .delete(`/splat/delete/${id}`)
+        .then((response) => response.data);
+  };
+
+  const listSplat = async ({limit, page, company_id}: {
+    limit: number,
+    page: number,
+    company_id: number
+  }): Promise<CommonResponse<ListCompaniesResponse[]>> => {
+    const urlParams: string = objectToUrlParams({limit, page, company_id});
+    return axiosClient.get(`/splat/list?${urlParams}`).then((response) => response.data);
+  };
+
+  //NEW COMPANY
+
   const createCompany = async (body: editProps) => {
     return axiosClient
         .post(`/cmp/create`, body, {
@@ -132,7 +177,6 @@ const httpClient = (baseUrl: string, token?: string) => {
         })
         .then((response) => response.data);
   };
-
   const editCompany = async (body: editProps) => {
     return axiosClient
         .put(`/cmp/update/${body.id}`, body, {
@@ -142,7 +186,6 @@ const httpClient = (baseUrl: string, token?: string) => {
         })
         .then((response) => response.data);
   };
-
   const removeCompany = async (id: number): Promise<CommonResponse<string>> => {
     return axiosClient
         .delete(`/cmp/delete/${id}`)
@@ -157,12 +200,18 @@ const httpClient = (baseUrl: string, token?: string) => {
     return axiosClient.get(`/cmp/list?${urlParams}`).then((response) => response.data);
   };
 
+
+
   return {
     uploadFile,
     listFiles,
     login,
     removeFile,
     editFile,
+    listSplat,
+    removeSplat,
+    editSplat,
+    createSplat,
     listCompanies,
     removeCompany,
     editCompany,

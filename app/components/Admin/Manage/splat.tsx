@@ -1,33 +1,21 @@
 'use client';
 
 import httpClient from '@/app/actions/httpClient';
-import { ListFilesResponse } from '@/app/actions/http';
-import { useEffect, useState } from 'react';
-import {
-  Button,
-  Card,
-  Form,
-  Input,
-  message,
-  Modal,
-  Space,
-  Table,
-  Upload,
-  UploadProps,
-} from 'antd';
-import {
-  CloudUploadOutlined,
-  DeleteFilled,
-  EditFilled,
-} from '@ant-design/icons';
+import {ListFilesResponse} from '@/app/actions/http';
+import {useEffect, useState} from 'react';
+import {Button, Card, Form, Input, message, Modal, Select, Space, Table, Upload, UploadProps,} from 'antd';
+import {CloudUploadOutlined, DeleteFilled, EditFilled,} from '@ant-design/icons';
 
 const { Dragger } = Upload;
-const TableList = ({ url }: any) => {
+const Splat = ({url}: any) => {
   const [form] = Form.useForm();
   const [editForm] = Form.useForm();
+  const [companyId, setCompanyId] = useState(0)
   const [editingFile, setEditingFile] = useState<ListFilesResponse | null>(
     null,
   );
+  const [params, setParams] = useState({limit: 10, page: 1, company_id: 0})
+
   const props: UploadProps = {
     name: 'file',
     multiple: false,
@@ -46,7 +34,7 @@ const TableList = ({ url }: any) => {
   const handleRemove = async (id: number) => {
     try {
       setLoading(true);
-      const response = await http.removeFile(id);
+      const response = await http.removeSplat(id);
       message.success('File removed successfully');
       handleRefetch();
     } catch (error) {
@@ -55,26 +43,33 @@ const TableList = ({ url }: any) => {
       setLoading(false);
     }
   };
-  const handleUpload = async (values: any) => {
+
+  const handleCreate = async (values: any) => {
     try {
       setLoading(true);
-      const response = await http.uploadFile(
-        values.file[0].originFileObj,
-        values.thumbnail[0].originFileObj,
-        values.title,
-        values.descriptions,
-      );
-      message.success('File uploaded successfully');
+      const splatFile = await http.fileUploader(values.file[0].originFileObj)
+      const thumbnailFile = await http.fileUploader(values.thumbnail[0].originFileObj)
+      const response = await http.createSplat({
+        storage_id: splatFile.responseObject.id,
+        title: values.title,
+        description: values.description,
+        thumbnail_id: thumbnailFile.responseObject.id,
+        company_id: companyId
+      });
+      message.success('File Registered successfully');
       handleRefetch();
-      setShowModal(false);
+      setShowModal(false)
     } catch (error) {
-      message.error('File upload failed');
+      message.error('File Register failed');
     } finally {
       setLoading(false);
     }
   };
+
+
   const http = httpClient(url);
   const [listSplat, setListSplat] = useState<ListFilesResponse[]>([]);
+  const [listCompany, setListCompany] = useState<ListFilesResponse[]>([]);
   const [refetch, setRefetch] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -91,15 +86,15 @@ const TableList = ({ url }: any) => {
     },
     {
       title: 'Description',
-      dataIndex: 'descriptions',
-      key: 'descriptions',
+      dataIndex: 'description',
+      key: 'description',
     },
     {
       title: 'Thumbnail',
-      dataIndex: 'thumbnail',
-      key: 'thumbnail',
+      dataIndex: 'thumbnail_url',
+      key: 'thumbnail_url',
       render: (text: string) => {
-        return <img src={text} alt={text} style={{ width: 100 }} />;
+        return <img src={text} alt={text} style={{width: 50, height: 50, objectFit: 'cover', borderRadius: '10rem'}} />;
       },
     },
     {
@@ -134,29 +129,45 @@ const TableList = ({ url }: any) => {
   };
 
   const handleEdit = async (values: any) => {
-    if (!editingFile) return;
     try {
       setLoading(true);
-      const response = await http.editFile(
-        editingFile.id,
-        values.file ? values.file[0].originFileObj : null,
-        values.thumbnail ? values.thumbnail[0].originFileObj : null,
-        values.title,
-        values.descriptions,
-      );
-      message.success('File edited successfully');
+      const splatFile = await http.fileUploader(values.file[0].originFileObj)
+      const thumbnailFile = await http.fileUploader(values.thumbnail[0].originFileObj)
+      const response = await http.editSplat({
+        storage_id: splatFile.responseObject.id,
+        title: values.title,
+        description: values.description,
+        thumbnail_id: thumbnailFile.responseObject.id,
+        company_id: companyId
+      });
+      message.success('File Registered successfully');
       handleRefetch();
       setEditingFile(null);
+
     } catch (error) {
-      message.error('File edit failed');
+      message.error('File Register failed');
     } finally {
       setLoading(false);
     }
   };
-  const loadList = async () => {
+
+  const loadCompany = async () => {
     setLoading(true);
     try {
-      const response = await http.listFiles();
+      const response = await http.listCompanies(params);
+      setListCompany(response.responseObject);
+      console.log(handleRefetch);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const loadList = async (body: any) => {
+    setCompanyId(body?.company_id)
+    setLoading(true);
+    try {
+      const response = await http.listSplat({...params, ...body});
       setListSplat(response.responseObject);
       console.log(handleRefetch);
     } catch (error) {
@@ -167,23 +178,41 @@ const TableList = ({ url }: any) => {
   };
 
   useEffect(() => {
-    loadList();
+    loadCompany();
   }, [refetch]);
   useEffect(() => {
     if (editingFile) {
       editForm.setFieldsValue({
         title: editingFile.title,
-        descriptions: editingFile.descriptions,
+        description: editingFile.description,
       });
     }
   }, [editingFile]);
+
+
   return (
+      <>
+        <Select
+            style={{marginBottom: 16}}
+            onChange={(e) => loadList({company_id: e})}
+            placeholder={"Select Company"}
+            options={listCompany?.map((item: any) => {
+              return {label: item.name, value: item.id}
+            })}
+        />
     <Card
       title="Manage Splat"
       extra={
-        <Button type="primary" onClick={() => setShowModal(true)}>
-          Add Splat
-        </Button>
+        <>
+          {!!companyId &&
+              <Button type="primary" onClick={() => {
+                form.resetFields()
+                setShowModal(true)
+              }}>
+                Add Splat
+              </Button>
+          }
+        </>
       }
     >
       <Table
@@ -202,7 +231,7 @@ const TableList = ({ url }: any) => {
         onCancel={() => setShowModal(false)}
         footer={null}
       >
-        <Form form={form} onFinish={handleUpload}>
+        <Form form={form} onFinish={handleCreate}>
           <Form.Item
             name="file"
             valuePropName="fileList"
@@ -244,12 +273,12 @@ const TableList = ({ url }: any) => {
             <Input placeholder="Title" />
           </Form.Item>
           <Form.Item
-            name="descriptions"
+              name="description"
             rules={[
-              { required: true, message: 'Please input the descriptions!' },
+              {required: true, message: 'Please input the description!'},
             ]}
           >
-            <Input.TextArea placeholder="Descriptions" />
+            <Input.TextArea placeholder="Description"/>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading}>
@@ -306,12 +335,12 @@ const TableList = ({ url }: any) => {
             <Input placeholder="Title" />
           </Form.Item>
           <Form.Item
-            name="descriptions"
+              name="description"
             rules={[
-              { required: true, message: 'Please input the descriptions!' },
+              {required: true, message: 'Please input the description!'},
             ]}
           >
-            <Input.TextArea placeholder="Descriptions" />
+            <Input.TextArea placeholder="Description"/>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading}>
@@ -321,7 +350,8 @@ const TableList = ({ url }: any) => {
         </Form>
       </Modal>
     </Card>
+      </>
   );
 };
 
-export default TableList;
+export default Splat;

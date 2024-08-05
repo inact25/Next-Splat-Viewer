@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 import { Col, Result, Row } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import TableList from '@/app/components/Admin/Manage/TableList';
+import Splat from '@/app/components/Admin/Manage/splat';
 import { API_URL } from '@/app/constant/config';
 
 const LayoutAuth = dynamic(
@@ -22,7 +22,7 @@ const Page = (props: any) => {
     <LayoutAuth>
       <Row gutter={[10, 10]}>
         <Col xs={24}>
-          <TableList url={API_URL} />
+          <Splat url={API_URL} />
         </Col>
       </Row>
     </LayoutAuth>
