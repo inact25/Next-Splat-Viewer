@@ -112,7 +112,7 @@ const Splat = ({url}: any) => {
       dataIndex: 'created_at',
       key: 'created_at',
       render: (text: string, record:any) => <Button onClick={() => {
-        navigator.clipboard.writeText(`${window.location.hostname}/world/${companyToken}/${record.storage_id}.splat`).then(() => {
+        navigator.clipboard.writeText(`${window.location.hostname}/world/${companyToken}/${record.id}.splat`).then(() => {
           message.success('Copied to Clipboard');
         }).catch(err => {
           message.error('Could not copy text: ', err);
@@ -210,7 +210,7 @@ const Splat = ({url}: any) => {
         <Select
             style={{marginBottom: 16}}
             onChange={(e) => {
-              loadList({company_id: e, company_token: listCompany?.find(data => data.id === e)?.token})
+              loadList({company_id: e, company_token: listCompany?.find((data: any) => data.id === e)?.token})
             }}
             placeholder={"Select Company"}
             options={listCompany?.map((item: any) => {
