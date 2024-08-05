@@ -29,7 +29,7 @@ const Home = async () => {
             </h1>
           </div>
           <div className="worldview grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 w-full gap-10">
-            {response.responseObject.map((item, key) => (
+            {response?.responseObject?.map((item, key) => (
               <div
                 key={key}
                 className="card p-3 border border-gray-800 rounded-2xl"

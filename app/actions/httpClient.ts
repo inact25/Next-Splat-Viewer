@@ -1,6 +1,10 @@
 'use client';
 import axios from 'axios';
-import { CommonResponse, ListFilesResponse } from '@/app/actions/http';
+import {CommonResponse, ListCompaniesResponse, ListFilesResponse} from '@/app/actions/http';
+
+const objectToUrlParams = (obj: any) => {
+  return new URLSearchParams(obj).toString();
+};
 
 const httpClient = (baseUrl: string, token?: string) => {
   const axiosClient = axios.create({
@@ -57,10 +61,34 @@ const httpClient = (baseUrl: string, token?: string) => {
       })
       .then((response) => response.data);
   };
+
+  type editProps = {
+
+    id: number,
+    name: any | null,
+    logo_id: any | null,
+    status: string,
+
+  }
+  const editCompany = async (body: editProps) => {
+    return axiosClient
+        .put(`/cmp/update/${body.id}`, body, {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+        .then((response) => response.data);
+  };
+
   const removeFile = async (id: number): Promise<CommonResponse<string>> => {
     return axiosClient
       .delete(`/file/upload/${id}`)
       .then((response) => response.data);
+  };
+  const removeCompany = async (id: number): Promise<CommonResponse<string>> => {
+    return axiosClient
+        .delete(`/cmp/delete/${id}`)
+        .then((response) => response.data);
   };
   const uploadFile = async (
     file: any,
@@ -84,12 +112,38 @@ const httpClient = (baseUrl: string, token?: string) => {
   const listFiles = async (): Promise<CommonResponse<ListFilesResponse[]>> => {
     return axiosClient.get('/file/list').then((response) => response.data);
   };
+
+  //NEW
+
+  const fileUploader = async (file: any) => {
+    const data = new FormData()
+    data.append("file", file)
+    return axiosClient.post('/file/upload', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+        .then((response) => response.data)
+  }
+
+  const listCompanies = async ({limit, page}: {
+    limit: number,
+    page: number
+  }): Promise<CommonResponse<ListCompaniesResponse[]>> => {
+    const urlParams: string = objectToUrlParams({limit, page});
+    return axiosClient.get(`/cmp/list?${urlParams}`).then((response) => response.data);
+  };
+
   return {
     uploadFile,
     listFiles,
     login,
     removeFile,
     editFile,
+    listCompanies,
+    removeCompany,
+    editCompany,
+    fileUploader
   };
 };
 

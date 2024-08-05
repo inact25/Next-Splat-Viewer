@@ -15,6 +15,16 @@ export type ListFilesResponse = {
   descriptions?: string;
 };
 
+export type ListCompaniesResponse = {
+  id: number;
+  created_at: string;
+  logo_url?: string;
+  logo_id?: string;
+  name?: string;
+  status?: boolean;
+};
+
+
 export const listFiles = async (): Promise<
   CommonResponse<ListFilesResponse[]>
 > => {
