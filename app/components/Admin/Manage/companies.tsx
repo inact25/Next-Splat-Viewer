@@ -180,7 +180,6 @@ const Companies = ({url}: any) => {
     }
   }, [editingFile]);
 
-  console.log(editingFile)
   return (
       <Card
           title="Manage Companies"
