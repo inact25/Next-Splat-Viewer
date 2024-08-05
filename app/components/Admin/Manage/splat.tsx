@@ -71,7 +71,7 @@ const Splat = ({url}: any) => {
 
   const http = httpClient(url);
   const [listSplat, setListSplat] = useState<ListFilesResponse[]>([]);
-  const [listCompany, setListCompany] = useState<ListFilesResponse[]>([]);
+  const [listCompany, setListCompany] = useState<any[]>([]);
   const [refetch, setRefetch] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
