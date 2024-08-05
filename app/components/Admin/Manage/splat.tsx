@@ -5,6 +5,7 @@ import {ListFilesResponse} from '@/app/actions/http';
 import {useEffect, useState} from 'react';
 import {Button, Card, Form, Input, message, Modal, Select, Space, Table, Upload, UploadProps,} from 'antd';
 import {CloudUploadOutlined, DeleteFilled, EditFilled,} from '@ant-design/icons';
+import {API_URL} from "@/app/constant/config";
 
 const { Dragger } = Upload;
 const Splat = ({url}: any) => {
@@ -111,7 +112,7 @@ const Splat = ({url}: any) => {
       dataIndex: 'created_at',
       key: 'created_at',
       render: (text: string, record:any) => <Button onClick={() => {
-        navigator.clipboard.writeText(`${process.env.API_URL}/bridge/${companyToken}/${record.storage_id}.splat`).then(() => {
+        navigator.clipboard.writeText(`${API_URL}/bridge/${companyToken}/${record.storage_id}.splat`).then(() => {
           message.success('Copied to Clipboard');
         }).catch(err => {
           message.error('Could not copy text: ', err);
