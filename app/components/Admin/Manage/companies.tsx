@@ -10,7 +10,7 @@ const {Dragger} = Upload;
 const Companies = ({url}: any) => {
   const [form] = Form.useForm();
   const [editForm] = Form.useForm();
-  const [editingFile, setEditingFile] = useState<ListFilesResponse | null>(
+  const [editingFile, setEditingFile] = useState<any | null>(
       null,
   );
   const [params, setParams] = useState({limit: 10, page: 1})
@@ -41,26 +41,9 @@ const Companies = ({url}: any) => {
       setLoading(false);
     }
   };
-  const handleUpload = async (values: any) => {
-    try {
-      setLoading(true);
-      const response = await http.uploadFile(
-          values.file[0].originFileObj,
-          values.thumbnail[0].originFileObj,
-          values.name,
-          values.descriptions,
-      );
-      message.success('File uploaded successfully');
-      handleRefetch();
-      setShowModal(false);
-    } catch (error) {
-      message.error('File upload failed');
-    } finally {
-      setLoading(false);
-    }
-  };
+
   const http = httpClient(url);
-  const [listCompanies, setListCompanies] = useState<ListFilesResponse[]>([]);
+  const [listCompanies, setListCompanies] = useState<any[]>([]);
   const [refetch, setRefetch] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -86,6 +69,8 @@ const Companies = ({url}: any) => {
       title: 'Token',
       dataIndex: 'token',
       key: 'token',
+      render: (e: any, record: any) => <div>{e ? e :
+          <Button onClick={() => handleGenerate(record.id)}>Generate Token Code</Button>}</div>
     },
     {
       title: 'Status',
@@ -115,6 +100,39 @@ const Companies = ({url}: any) => {
     setRefetch(!refetch);
   };
 
+  const handleGenerate = async (id: any) => {
+    try {
+      setLoading(true);
+      const response = await http.generateToken(id);
+      message.success('Token Generated successfully');
+      handleRefetch();
+    } catch (error) {
+      message.error('Token Generate failed');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleCreate = async (values: any) => {
+    try {
+      setLoading(true);
+      const uploadResp = await http.fileUploader(values.logo[0].originFileObj)
+      const response = await http.createCompany({
+        logo_id: uploadResp.responseObject.id,
+        name: values.name,
+        status: values.status,
+      });
+      message.success('Company Registered successfully');
+      handleRefetch();
+      setShowModal(false)
+    } catch (error) {
+      message.error('Company Register failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   const handleEdit = async (values: any) => {
     if (!editingFile) return;
     try {
@@ -126,11 +144,11 @@ const Companies = ({url}: any) => {
         name: values.name,
         status: values.status,
       });
-      message.success('File edited successfully');
+      message.success('Company update successfully');
       handleRefetch();
       setEditingFile(null);
     } catch (error) {
-      message.error('File edit failed');
+      message.error('Company update failed');
     } finally {
       setLoading(false);
     }
@@ -154,16 +172,23 @@ const Companies = ({url}: any) => {
   useEffect(() => {
     if (editingFile) {
       editForm.setFieldsValue({
-        title: editingFile.title,
-        descriptions: editingFile.descriptions,
+        id: editingFile.id,
+        logo_id: editingFile.logo_id,
+        name: editingFile.name,
+        status: editingFile.status,
       });
     }
   }, [editingFile]);
+
+  console.log(editingFile)
   return (
       <Card
           title="Manage Companies"
           extra={
-            <Button type="primary" onClick={() => setShowModal(true)}>
+            <Button type="primary" onClick={() => {
+              form.resetFields()
+              setShowModal(true)
+            }}>
               Register New Company
             </Button>
           }
@@ -184,7 +209,7 @@ const Companies = ({url}: any) => {
             onCancel={() => setShowModal(false)}
             footer={null}
         >
-          <Form form={form} onFinish={handleUpload}>
+          <Form initialValues={{status:true}} form={form} onFinish={handleCreate}>
             <Form.Item
                 name="logo"
                 valuePropName="fileList"
@@ -209,21 +234,14 @@ const Companies = ({url}: any) => {
               <Input placeholder="Company Name"/>
             </Form.Item>
             <Form.Item
+                valuePropName={"checked"}
                 style={{fontWeight: "bold", fontSize: 18}}
                 label={"Status"}
                 name={'status'}
                 rules={[{required: true, message: 'Please set Token Status!'}]}>
-              <Switch onChange={e => console.log("asu", e)} checkedChildren="Active" unCheckedChildren="Nonactive"
-                      defaultChecked/>
+              <Switch checkedChildren="Active" unCheckedChildren="Nonactive"
+                      defaultChecked defaultValue={true}/>
             </Form.Item>
-            {/*<Form.Item*/}
-            {/*    name="descriptions"*/}
-            {/*    rules={[*/}
-            {/*      {required: true, message: 'Please input the descriptions!'},*/}
-            {/*    ]}*/}
-            {/*>*/}
-            {/*  <Input.TextArea placeholder="Descriptions"/>*/}
-            {/*</Form.Item>*/}
             <Form.Item>
               <Button type="primary" htmlType="submit" loading={loading}>
                 Register Company
@@ -262,12 +280,13 @@ const Companies = ({url}: any) => {
               <Input placeholder="Company Name"/>
             </Form.Item>
             <Form.Item
+                valuePropName={"checked"}
                 style={{fontWeight: "bold", fontSize: 18}}
                 label={"Status"}
                 name={'status'}
                 rules={[{required: true, message: 'Please set Token Status!'}]}>
-              <Switch onChange={e => console.log("asu", e)} checkedChildren="Active" unCheckedChildren="Nonactive"
-                      defaultChecked/>
+              <Switch  checkedChildren="Active" unCheckedChildren="Nonactive"
+                      defaultChecked defaultValue={true}/>
             </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit" loading={loading}>

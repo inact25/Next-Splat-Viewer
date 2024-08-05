@@ -64,32 +64,20 @@ const httpClient = (baseUrl: string, token?: string) => {
 
   type editProps = {
 
-    id: number,
+    id?: number,
     name: any | null,
     logo_id: any | null,
     status: string,
 
   }
-  const editCompany = async (body: editProps) => {
-    return axiosClient
-        .put(`/cmp/update/${body.id}`, body, {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        })
-        .then((response) => response.data);
-  };
+
 
   const removeFile = async (id: number): Promise<CommonResponse<string>> => {
     return axiosClient
       .delete(`/file/upload/${id}`)
       .then((response) => response.data);
   };
-  const removeCompany = async (id: number): Promise<CommonResponse<string>> => {
-    return axiosClient
-        .delete(`/cmp/delete/${id}`)
-        .then((response) => response.data);
-  };
+
   const uploadFile = async (
     file: any,
     thumbnail: any,
@@ -115,6 +103,15 @@ const httpClient = (baseUrl: string, token?: string) => {
 
   //NEW
 
+  const generateToken = async (id: any) => {
+    return axiosClient.patch(`/cmp/syncToken/${id}`, {}, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  }
+
+
   const fileUploader = async (file: any) => {
     const data = new FormData()
     data.append("file", file)
@@ -125,6 +122,32 @@ const httpClient = (baseUrl: string, token?: string) => {
     })
         .then((response) => response.data)
   }
+
+  const createCompany = async (body: editProps) => {
+    return axiosClient
+        .post(`/cmp/create`, body, {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+        .then((response) => response.data);
+  };
+
+  const editCompany = async (body: editProps) => {
+    return axiosClient
+        .put(`/cmp/update/${body.id}`, body, {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+        .then((response) => response.data);
+  };
+
+  const removeCompany = async (id: number): Promise<CommonResponse<string>> => {
+    return axiosClient
+        .delete(`/cmp/delete/${id}`)
+        .then((response) => response.data);
+  };
 
   const listCompanies = async ({limit, page}: {
     limit: number,
@@ -143,7 +166,9 @@ const httpClient = (baseUrl: string, token?: string) => {
     listCompanies,
     removeCompany,
     editCompany,
-    fileUploader
+    fileUploader,
+    createCompany,
+    generateToken
   };
 };
 
