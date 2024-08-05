@@ -124,7 +124,7 @@ const Splat = ({url}: any) => {
       dataIndex: 'created_at',
       key: 'created_at',
       render: (text: string, record:any) => <Button onClick={() => {
-        const textToCopy = `<iframe src="${window.location.hostname}/world/${companyToken}/${record.id}.splat" title="${record.title}" style="width:100%; height:100dvh; border:none;"></iframe>`;
+        const textToCopy = `<iframe src="https://${window.location.hostname}/world/${companyToken}/${record.id}.splat" title="${record.title}" style="width:100%; height:100dvh; border:none;"></iframe>`;
         navigator.clipboard.writeText(textToCopy).then(() => {
           message.success('Copied to Clipboard');
         }).catch(err => {
