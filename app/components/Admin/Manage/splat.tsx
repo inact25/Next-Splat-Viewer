@@ -20,7 +20,14 @@ const Splat = ({url}: any) => {
   const props: UploadProps = {
     name: 'file',
     multiple: false,
-    beforeUpload: () => false
+    beforeUpload: (file) => {
+      const fileSizeMB = file.size / 1000000; // Convert bytes to MB
+      if (fileSizeMB > 20) {
+        message.error('File size exceeds 20MB');
+        return Upload.LIST_IGNORE; // Prevent upload and remove the file from the list
+      }
+      return false; // Prevent default upload behavior
+    },
 
     // accept: '.splat',
   };
