@@ -26,10 +26,27 @@ const Splat = ({url}: any) => {
         message.error('File size exceeds 20MB');
         return Upload.LIST_IGNORE; // Prevent upload and remove the file from the list
       }
+      form.setFieldsValue({file: file})
       return false; // Prevent default upload behavior
     },
 
-    // accept: '.splat',
+    accept: '.splat',
+  };
+
+  const propsThumbnail: UploadProps = {
+    name: 'file',
+    multiple: false,
+    beforeUpload: (file) => {
+      const fileSizeMB = file.size / 1000000; // Convert bytes to MB
+      if (fileSizeMB > 20) {
+        message.error('File size exceeds 20MB');
+        return Upload.LIST_IGNORE; // Prevent upload and remove the file from the list
+      }
+      form.setFieldsValue({thumbnail: file})
+      return false; // Prevent default upload behavior
+    },
+
+    // accept: '',
   };
   const handleRemove = async (id: number) => {
     try {
@@ -47,8 +64,8 @@ const Splat = ({url}: any) => {
   const handleCreate = async (values: any) => {
     try {
       setLoading(true);
-      const splatFile = await http.fileUploader(values.file[0].originFileObj)
-      const thumbnailFile = await http.fileUploader(values.thumbnail[0].originFileObj)
+      const splatFile = await http.fileUploader(values.file.file)
+      const thumbnailFile = await http.fileUploader(values.thumbnail.file)
       const response = await http.createSplat({
         storage_id: splatFile.responseObject.id,
         title: values.title,
@@ -60,6 +77,7 @@ const Splat = ({url}: any) => {
       handleRefetch();
       setShowModal(false)
     } catch (error) {
+      console.log(error)
       message.error('File Register failed');
     } finally {
       setLoading(false);
@@ -156,8 +174,8 @@ const Splat = ({url}: any) => {
   const handleEdit = async (values: any) => {
     try {
       setLoading(true);
-      const splatFile = await http.fileUploader(values.file[0].originFileObj)
-      const thumbnailFile = await http.fileUploader(values.thumbnail[0].originFileObj)
+      const splatFile = await http.fileUploader(values.file.file)
+      const thumbnailFile = await http.fileUploader(values.thumbnail.file)
       const response = await http.editSplat({
         storage_id: splatFile.responseObject.id,
         title: values.title,
@@ -262,11 +280,6 @@ const Splat = ({url}: any) => {
         <Form form={form} onFinish={handleCreate}>
           <Form.Item
             name="file"
-            valuePropName="fileList"
-            getValueFromEvent={(e) => {
-              console.log(e.fileList[0])
-              e.fileList
-            }}
           >
             <Dragger {...props}>
               <p className="ant-upload-drag-icon">
@@ -282,10 +295,8 @@ const Splat = ({url}: any) => {
           </Form.Item>
           <Form.Item
             name="thumbnail"
-            valuePropName="fileList"
-            getValueFromEvent={(e) => e.fileList}
           >
-            <Dragger {...props}>
+            <Dragger {...propsThumbnail}>
               <p className="ant-upload-drag-icon">
                 <CloudUploadOutlined />
               </p>
@@ -327,8 +338,6 @@ const Splat = ({url}: any) => {
         <Form form={editForm} onFinish={handleEdit}>
           <Form.Item
             name="file"
-            valuePropName="fileList"
-            getValueFromEvent={(e) => e.fileList}
           >
             <Dragger {...props}>
               <p className="ant-upload-drag-icon">
@@ -344,8 +353,6 @@ const Splat = ({url}: any) => {
           </Form.Item>
           <Form.Item
             name="thumbnail"
-            valuePropName="fileList"
-            getValueFromEvent={(e) => e.fileList}
           >
             <Dragger {...props}>
               <p className="ant-upload-drag-icon">
