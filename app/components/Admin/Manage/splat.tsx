@@ -21,16 +21,7 @@ const Splat = ({url}: any) => {
   const props: UploadProps = {
     name: 'file',
     multiple: false,
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-    beforeUpload(file) {
-      const isLt20M = file.size / 1024 / 1024 <= 20;
-      if (!isLt20M) {
-        message.error('File must be smaller than 20MB!');
-      }
-      return isLt20M;
-    },
+
     // accept: '.splat',
   };
   const handleRemove = async (id: number) => {
@@ -56,7 +47,7 @@ const Splat = ({url}: any) => {
         title: values.title,
         description: values.description,
         thumbnail_id: thumbnailFile.responseObject.id,
-        company_id: companyId
+        company_id: Number(companyId)
       });
       message.success('File Registered successfully');
       handleRefetch();
@@ -265,7 +256,10 @@ const Splat = ({url}: any) => {
           <Form.Item
             name="file"
             valuePropName="fileList"
-            getValueFromEvent={(e) => e.fileList}
+            getValueFromEvent={(e) => {
+              console.log(e.fileList[0])
+              e.fileList
+            }}
           >
             <Dragger {...props}>
               <p className="ant-upload-drag-icon">
