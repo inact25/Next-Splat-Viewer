@@ -5,7 +5,6 @@ import {ListFilesResponse} from '@/app/actions/http';
 import {useEffect, useState} from 'react';
 import {Button, Card, Form, Input, message, Modal, Select, Space, Table, Upload, UploadProps,} from 'antd';
 import {CloudUploadOutlined, DeleteFilled, EditFilled,} from '@ant-design/icons';
-import {API_URL} from "@/app/constant/config";
 
 const { Dragger } = Upload;
 const Splat = ({url}: any) => {
@@ -21,6 +20,7 @@ const Splat = ({url}: any) => {
   const props: UploadProps = {
     name: 'file',
     multiple: false,
+    beforeUpload: () => false
 
     // accept: '.splat',
   };
