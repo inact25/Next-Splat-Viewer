@@ -12,6 +12,7 @@ const Splat = ({url}: any) => {
   const [editForm] = Form.useForm();
   const [companyId, setCompanyId] = useState(0)
   const [companyToken, setCompanyToken] = useState(0)
+  const [companyData, setCompanyData] = useState({})
   const [editingFile, setEditingFile] = useState<ListFilesResponse | null>(
     null,
   );
@@ -223,6 +224,7 @@ const Splat = ({url}: any) => {
 
   useEffect(() => {
     loadCompany();
+    loadList(companyData)
   }, [refetch]);
   useEffect(() => {
     if (editingFile) {
@@ -239,6 +241,7 @@ const Splat = ({url}: any) => {
         <Select
             style={{marginBottom: 16}}
             onChange={(e) => {
+              setCompanyData({company_id: e, company_token: listCompany?.find((data: any) => data.id === e)?.token})
               loadList({company_id: e, company_token: listCompany?.find((data: any) => data.id === e)?.token})
             }}
             placeholder={"Select Company"}
