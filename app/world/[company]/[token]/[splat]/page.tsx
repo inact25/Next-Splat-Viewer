@@ -16,7 +16,7 @@ const Page = async (props: any) => {
   if (typeof params.splat === 'string' && params.splat.includes(".splat")) {
     return (
         <>
-          <GaussianSplat src={`https://api-gv.ciptadusa.com/bridge/${params.company}/${params.splat}`}/>
+          <GaussianSplat src={`https://api-gv.ciptadusa.com/bridge/${params.token}/${params.splat}`}/>
         </>
     );
   } else {

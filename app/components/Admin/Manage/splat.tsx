@@ -1,18 +1,19 @@
 'use client';
 
 import httpClient from '@/app/actions/httpClient';
-import {ListFilesResponse} from '@/app/actions/http';
-import {useEffect, useState} from 'react';
-import {Button, Card, Form, Input, message, Modal, Select, Space, Table, Upload, UploadProps,} from 'antd';
-import {CloudUploadOutlined, DeleteFilled, EditFilled,} from '@ant-design/icons';
+import { ListFilesResponse } from '@/app/actions/http';
+import { useEffect, useState } from 'react';
+import { Button, Card, Form, Input, message, Modal, Select, Space, Table, Upload, UploadProps } from 'antd';
+import { CloudUploadOutlined, DeleteFilled, EditFilled } from '@ant-design/icons';
 
 const { Dragger } = Upload;
 const Splat = ({url}: any) => {
+  const [recordData, setRecordData] = useState<any>({});
   const [form] = Form.useForm();
   const [editForm] = Form.useForm();
   const [companyId, setCompanyId] = useState(0)
   const [companyToken, setCompanyToken] = useState(0)
-  const [companyData, setCompanyData] = useState({})
+  const [companyData, setCompanyData] = useState<any>({});
   const [editingFile, setEditingFile] = useState<ListFilesResponse | null>(
     null,
   );
@@ -125,31 +126,38 @@ const Splat = ({url}: any) => {
       },
     },
     {
-      title: 'Embed Url',
+      title: 'Script',
       dataIndex: 'created_at',
       key: 'created_at',
       render: (text: string, record:any) => <Button onClick={() => {
-        navigator.clipboard.writeText(`https://${window.location.hostname}/world/${companyToken}/${record.id}.splat`).then(() => {
-          message.success('Copied to Clipboard');
-        }).catch(err => {
-          message.error('Could not copy text: ', err);
-        });
-      }}>Copy Embeded Url</Button>
+        setRecordData(record);
+      }}>Generate Script</Button>
     },
-    {
-      title: 'Embed Script',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      render: (text: string, record:any) => <Button onClick={() => {
-        const textToCopy = `<iframe src="https://${window.location.hostname}/world/${companyToken}/${record.id}.splat" title="${record.title}" style="width:100%; height:100dvh; border:none;"></iframe>`;
-        navigator.clipboard.writeText(textToCopy).then(() => {
-          message.success('Copied to Clipboard');
-        }).catch(err => {
-          message.error('Could not copy text: ', err);
-        });
-      }}>Copy Embeded Script</Button>
-    },
-
+    // {
+    //   title: 'Embed Url',
+    //   dataIndex: 'created_at',
+    //   key: 'created_at',
+    //   render: (text: string, record:any) => <Button onClick={() => {
+    //     navigator.clipboard.writeText(`https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${record.id}.splat`).then(() => {
+    //       message.success('Copied to Clipboard');
+    //     }).catch(err => {
+    //       message.error('Could not copy text: ', err);
+    //     });
+    //   }}>Copy Embeded Url</Button>
+    // },
+    // {
+    //   title: 'Embed Script',
+    //   dataIndex: 'created_at',
+    //   key: 'created_at',
+    //   render: (text: string, record:any) => <Button onClick={() => {
+    //     const textToCopy = `<iframe src="https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${record.id}.splat" title="${record.title}" style="width:100%; height:100dvh; border:none;"></iframe>`;
+    //     navigator.clipboard.writeText(textToCopy).then(() => {
+    //       message.success('Copied to Clipboard');
+    //     }).catch(err => {
+    //       message.error('Could not copy text: ', err);
+    //     });
+    //   }}>Copy Embeded Script</Button>
+    // },
     {
       title: 'Actions',
       key: 'actions',
@@ -241,13 +249,15 @@ const Splat = ({url}: any) => {
         <Select
             style={{marginBottom: 16}}
             onChange={(e) => {
-              setCompanyData({company_id: e, company_token: listCompany?.find((data: any) => data.id === e)?.token})
+              setCompanyData({
+                company_id: e,
+                company_token: listCompany?.find((data: any) => data.id === e)?.token,
+                company_name: listCompany?.find((data: any) => data.id === e)?.name?.replaceAll(' ', '_'),
+              });
               loadList({company_id: e, company_token: listCompany?.find((data: any) => data.id === e)?.token})
             }}
             placeholder={"Select Company"}
-            options={listCompany?.map((item: any) => {
-              return {label: item.name, value: item.id}
-            })}
+            options={listCompany?.filter(item => item.token)?.map(item => ({ label: item.name, value: item.id }))}
         />
     <Card
       title="Manage Splat"
@@ -390,6 +400,50 @@ const Splat = ({url}: any) => {
           </Form.Item>
         </Form>
       </Modal>
+      <>
+        <Modal title="Generate World Script" open={!!Object.keys(recordData)?.length} onOk={() => setRecordData({})}
+               onCancel={() => setRecordData({})}>
+          <div style={{ marginBottom: '2rem' }} className="preview">
+            <iframe
+              src={`http://${window.location.hostname}:3000/world/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`}
+              title="${record.title}" style={{ width: '100%', height: 300, border: 'none' }}></iframe>
+          </div>
+          <h5 style={{ fontWeight: 600, marginBottom: '.5rem' }}>Url</h5>
+          <div style={{ marginBottom: '2rem', display: 'flex', gap: 5, justifyContent: 'space-between' }}>
+            <div style={{ width: '80%' }}>
+              <Input disabled
+                     value={`https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`} />
+            </div>
+            <div style={{ width: 'auto' }}>
+              <Button onClick={() => {
+                navigator.clipboard.writeText(`https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`).then(() => {
+                  message.success('Copied to Clipboard');
+                }).catch(err => {
+                  message.error('Could not copy text: ', err);
+                });
+              }}>Copy Url</Button>
+            </div>
+          </div>
+          <div style={{ marginBottom: '2rem' }}>
+            <h5 style={{ fontWeight: 600, marginBottom: '.5rem' }}>Script</h5>
+            <div style={{ marginBottom: '2rem', justifyContent: 'space-between' }}>
+              <div>
+                <Input.TextArea style={{ marginBottom: '1rem' }} rows={3} disabled
+                                value={`<iframe src="https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${recordData.id}.splat" title="${recordData.title}" style="width:100%; height:100dvh; border:none;"></iframe>`} />
+              </div>
+              <div>
+                <Button onClick={() => {
+                  const textToCopy = `<iframe src="https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${recordData.id}.splat" title="${recordData.title}" style="width:100%; height:100dvh; border:none;"></iframe>`;
+                  navigator.clipboard.writeText(textToCopy).then(() => {
+                    message.success('Script Copied to Clipboard');
+                  }).catch(err => {
+                    message.error('Could not copy Script: ', err);
+                  });
+                }}>Copy Script</Button>
+              </div>
+            </div>
+          </div>
+        </Modal></>
     </Card>
       </>
   );
