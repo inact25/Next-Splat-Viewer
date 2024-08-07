@@ -3,17 +3,32 @@
 import httpClient from '@/app/actions/httpClient';
 import { ListFilesResponse } from '@/app/actions/http';
 import { useEffect, useState } from 'react';
-import { Button, Card, Form, Input, message, Modal, Space, Switch, Table, Tag, Upload, UploadProps } from 'antd';
-import { CloudUploadOutlined, DeleteFilled, EditFilled } from '@ant-design/icons';
+import {
+  Button,
+  Card,
+  Form,
+  Input,
+  message,
+  Modal,
+  Space,
+  Switch,
+  Table,
+  Tag,
+  Upload,
+  UploadProps,
+} from 'antd';
+import {
+  CloudUploadOutlined,
+  DeleteFilled,
+  EditFilled,
+} from '@ant-design/icons';
 
-const {Dragger} = Upload;
-const Companies = ({url}: any) => {
+const { Dragger } = Upload;
+const Companies = ({ url }: any) => {
   const [form] = Form.useForm();
   const [editForm] = Form.useForm();
-  const [editingFile, setEditingFile] = useState<any | null>(
-      null,
-  );
-  const [params, setParams] = useState({limit: 10, page: 1})
+  const [editingFile, setEditingFile] = useState<any | null>(null);
+  const [params, setParams] = useState({ limit: 10, page: 1 });
   const props: UploadProps = {
     name: 'file',
     multiple: false,
@@ -57,8 +72,18 @@ const Companies = ({url}: any) => {
       title: 'Logo',
       dataIndex: 'logo_url',
       key: 'logo_url',
-      render: (e: any) => <img style={{width: 50, height: 50, objectFit: 'cover', borderRadius: '10rem'}} src={e}
-                               alt="logo"/>
+      render: (e: any) => (
+        <img
+          style={{
+            width: 50,
+            height: 50,
+            objectFit: 'cover',
+            borderRadius: '10rem',
+          }}
+          src={e}
+          alt="logo"
+        />
+      ),
     },
     {
       title: 'Company name',
@@ -74,30 +99,41 @@ const Companies = ({url}: any) => {
       title: 'Token',
       dataIndex: 'token',
       key: 'token',
-      render: (e: any, record: any) => <div>{e ? e :
-          <Button onClick={() => handleGenerate(record.id)}>Generate Token Code</Button>}</div>
+      render: (e: any, record: any) => (
+        <div>
+          {e ? (
+            e
+          ) : (
+            <Button onClick={() => handleGenerate(record.id)}>
+              Generate Token Code
+            </Button>
+          )}
+        </div>
+      ),
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      render: (e: boolean) => <Tag color={e ? "green" : 'red'}>{e ? "Active" : "Nonactive"}</Tag>
+      render: (e: boolean) => (
+        <Tag color={e ? 'green' : 'red'}>{e ? 'Active' : 'Nonactive'}</Tag>
+      ),
     },
     {
       title: 'Actions',
       key: 'actions',
       render: (text: string, record: ListFilesResponse) => (
-          <Space direction="horizontal">
-            <Button
-                icon={<EditFilled/>}
-                onClick={() => setEditingFile(record)}
-            />
-            <Button
-                danger
-                icon={<DeleteFilled/>}
-                onClick={() => handleRemove(record.id)}
-            />
-          </Space>
+        <Space direction="horizontal">
+          <Button
+            icon={<EditFilled />}
+            onClick={() => setEditingFile(record)}
+          />
+          <Button
+            danger
+            icon={<DeleteFilled />}
+            onClick={() => handleRemove(record.id)}
+          />
+        </Space>
       ),
     },
   ];
@@ -116,12 +152,12 @@ const Companies = ({url}: any) => {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const handleCreate = async (values: any) => {
     try {
       setLoading(true);
-      const uploadResp = await http.fileUploader(values.logo[0].originFileObj)
+      const uploadResp = await http.fileUploader(values.logo[0].originFileObj);
       const response = await http.createCompany({
         logo_id: uploadResp.responseObject.id,
         name: values.name,
@@ -130,7 +166,7 @@ const Companies = ({url}: any) => {
       });
       message.success('Company Registered successfully');
       handleRefetch();
-      setShowModal(false)
+      setShowModal(false);
     } catch (error) {
       message.error('Company Register failed');
     } finally {
@@ -138,23 +174,28 @@ const Companies = ({url}: any) => {
     }
   };
 
-
   const handleEdit = async (values: any) => {
     if (!editingFile) return;
     try {
       setLoading(true);
-      const uploadResp = await http.fileUploader(values.logo[0].originFileObj)
-      const response = await http.editCompany({
+      let payload: any = {
         id: editingFile.id,
-        logo_id: uploadResp.responseObject.id,
         name: values.name,
         status: values.status,
         domain: values.domain,
-      });
+      };
+      if (values?.logo) {
+        const uploadResp = await http.fileUploader(
+          values.logo[0].originFileObj,
+        );
+        payload.logo_id = uploadResp?.responseObject?.id ?? null;
+      }
+      const response = await http.editCompany(payload);
       message.success('Company update successfully');
       handleRefetch();
       setEditingFile(null);
     } catch (error) {
+      console.log('error', error);
       message.error('Company update failed');
     } finally {
       setLoading(false);
@@ -188,132 +229,149 @@ const Companies = ({url}: any) => {
   }, [editingFile]);
 
   return (
-      <Card
-          title="Manage Companies"
-          extra={
-            <Button type="primary" onClick={() => {
-              form.resetFields()
-              setShowModal(true)
-            }}>
-              Register New Company
-            </Button>
-          }
+    <Card
+      title="Manage Companies"
+      extra={
+        <Button
+          type="primary"
+          onClick={() => {
+            form.resetFields();
+            setShowModal(true);
+          }}
+        >
+          Register New Company
+        </Button>
+      }
+    >
+      <Table
+        columns={columns}
+        dataSource={listCompanies}
+        loading={loading}
+        rowKey={(record) => record.id.toString()}
+        scroll={{
+          x: 768,
+        }}
+        pagination={false}
+      />
+      <Modal
+        title="Register New Company"
+        open={showModal}
+        onCancel={() => setShowModal(false)}
+        footer={null}
       >
-        <Table
-            columns={columns}
-            dataSource={listCompanies}
-            loading={loading}
-            rowKey={(record) => record.id.toString()}
-            scroll={{
-              x: 768,
-            }}
-            pagination={false}
-        />
-        <Modal
-            title="Register New Company"
-            open={showModal}
-            onCancel={() => setShowModal(false)}
-            footer={null}
+        <Form
+          initialValues={{ status: true }}
+          form={form}
+          onFinish={handleCreate}
         >
-          <Form initialValues={{status:true}} form={form} onFinish={handleCreate}>
-            <Form.Item
-                name="logo"
-                valuePropName="fileList"
-                getValueFromEvent={(e) => e.fileList}
-            >
-              <Dragger {...props}>
-                <p className="ant-upload-drag-icon">
-                  <CloudUploadOutlined/>
-                </p>
-                <p className="ant-upload-text">
-                  Click or drag logo to this area to upload
-                </p>
-                <p className="ant-upload-hint">
-                  Accept only image files and file size must be smaller than 20MB
-                </p>
-              </Dragger>
-            </Form.Item>
-            <Form.Item
-                name="name"
-                rules={[{required: true, message: 'Please input the name!'}]}
-            >
-              <Input placeholder="Company Name"/>
-            </Form.Item>
-            <Form.Item
-              name="domain"
-              rules={[{ required: true, message: 'Please input the domain!' }]}
-            >
-              <Input placeholder="Company Domain" />
-            </Form.Item>
-            <Form.Item
-                valuePropName={"checked"}
-                style={{fontWeight: "bold", fontSize: 18}}
-                label={"Status"}
-                name={'status'}
-                rules={[{required: true, message: 'Please set Token Status!'}]}>
-              <Switch checkedChildren="Active" unCheckedChildren="Nonactive"
-                      defaultChecked defaultValue={true}/>
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" loading={loading}>
-                Register Company
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-        <Modal
-            title="Edit Company"
-            open={!!editingFile}
-            onCancel={() => setEditingFile(null)}
-            footer={null}
-        >
-          <Form form={editForm} onFinish={handleEdit}>
-            <Form.Item
-                name="logo"
-                valuePropName="fileList"
-                getValueFromEvent={(e) => e.fileList}
-            >
-              <Dragger {...props}>
-                <p className="ant-upload-drag-icon">
-                  <CloudUploadOutlined/>
-                </p>
-                <p className="ant-upload-text">
-                  Click or drag logo to this area to upload
-                </p>
-                <p className="ant-upload-hint">
-                  Accept only image files and file size must be smaller than 20MB
-                </p>
-              </Dragger>
-            </Form.Item>
-            <Form.Item
-                name="name"
-                rules={[{required: true, message: 'Please input the Name!'}]}
-            >
-              <Input placeholder="Company Name"/>
-            </Form.Item>
-            <Form.Item
-              name="domain"
-              rules={[{ required: true, message: 'Please input the domain!' }]}
-            >
-              <Input placeholder="Company Domain" />
-            </Form.Item>
-            <Form.Item
-                valuePropName={"checked"}
-                style={{fontWeight: "bold", fontSize: 18}}
-                label={"Status"}
-                name={'status'}
-                rules={[{required: true, message: 'Please set Token Status!'}]}>
-              <Switch  checkedChildren="Active" unCheckedChildren="Nonactive"
-                      defaultChecked defaultValue={true}/>
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" loading={loading}>
-                Save Company
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-      </Card>
+          <Form.Item
+            name="logo"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e.fileList}
+          >
+            <Dragger {...props}>
+              <p className="ant-upload-drag-icon">
+                <CloudUploadOutlined />
+              </p>
+              <p className="ant-upload-text">
+                Click or drag logo to this area to upload
+              </p>
+              <p className="ant-upload-hint">
+                Accept only image files and file size must be smaller than 20MB
+              </p>
+            </Dragger>
+          </Form.Item>
+          <Form.Item
+            name="name"
+            rules={[{ required: true, message: 'Please input the name!' }]}
+          >
+            <Input placeholder="Company Name" />
+          </Form.Item>
+          <Form.Item
+            name="domain"
+            rules={[{ required: true, message: 'Please input the domain!' }]}
+          >
+            <Input placeholder="Company Domain" />
+          </Form.Item>
+          <Form.Item
+            valuePropName={'checked'}
+            style={{ fontWeight: 'bold', fontSize: 18 }}
+            label={'Status'}
+            name={'status'}
+            rules={[{ required: true, message: 'Please set Token Status!' }]}
+          >
+            <Switch
+              checkedChildren="Active"
+              unCheckedChildren="Nonactive"
+              defaultChecked
+              defaultValue={true}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              Register Company
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title="Edit Company"
+        open={!!editingFile}
+        onCancel={() => setEditingFile(null)}
+        footer={null}
+      >
+        <Form form={editForm} onFinish={handleEdit}>
+          <Form.Item
+            name="logo"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e.fileList}
+          >
+            <Dragger {...props}>
+              <p className="ant-upload-drag-icon">
+                <CloudUploadOutlined />
+              </p>
+              <p className="ant-upload-text">
+                Click or drag logo to this area to upload
+              </p>
+              <p className="ant-upload-hint">
+                Accept only image files and file size must be smaller than 20MB
+              </p>
+            </Dragger>
+          </Form.Item>
+          <Form.Item
+            name="name"
+            rules={[{ required: true, message: 'Please input the Name!' }]}
+          >
+            <Input placeholder="Company Name" />
+          </Form.Item>
+          <Form.Item
+            name="domain"
+            rules={[{ required: true, message: 'Please input the domain!' }]}
+          >
+            <Input placeholder="Company Domain" />
+          </Form.Item>
+          <Form.Item
+            valuePropName={'checked'}
+            style={{ fontWeight: 'bold', fontSize: 18 }}
+            label={'Status'}
+            name={'status'}
+            rules={[{ required: true, message: 'Please set Token Status!' }]}
+          >
+            <Switch
+              checkedChildren="Active"
+              unCheckedChildren="Nonactive"
+              defaultChecked
+              defaultValue={true}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              Save Company
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </Card>
   );
 };
 
