@@ -1,10 +1,10 @@
 'use client';
 
 import httpClient from '@/app/actions/httpClient';
-import {ListFilesResponse} from '@/app/actions/http';
-import {useEffect, useState} from 'react';
-import {Button, Card, Form, Input, message, Modal, Space, Switch, Table, Tag, Upload, UploadProps,} from 'antd';
-import {CloudUploadOutlined, DeleteFilled, EditFilled,} from '@ant-design/icons';
+import { ListFilesResponse } from '@/app/actions/http';
+import { useEffect, useState } from 'react';
+import { Button, Card, Form, Input, message, Modal, Space, Switch, Table, Tag, Upload, UploadProps } from 'antd';
+import { CloudUploadOutlined, DeleteFilled, EditFilled } from '@ant-design/icons';
 
 const {Dragger} = Upload;
 const Companies = ({url}: any) => {
@@ -66,6 +66,11 @@ const Companies = ({url}: any) => {
       key: 'name',
     },
     {
+      title: 'Company Domain',
+      dataIndex: 'domain',
+      key: 'domain',
+    },
+    {
       title: 'Token',
       dataIndex: 'token',
       key: 'token',
@@ -121,6 +126,7 @@ const Companies = ({url}: any) => {
         logo_id: uploadResp.responseObject.id,
         name: values.name,
         status: values.status,
+        domain: values.domain,
       });
       message.success('Company Registered successfully');
       handleRefetch();
@@ -143,6 +149,7 @@ const Companies = ({url}: any) => {
         logo_id: uploadResp.responseObject.id,
         name: values.name,
         status: values.status,
+        domain: values.domain,
       });
       message.success('Company update successfully');
       handleRefetch();
@@ -233,6 +240,12 @@ const Companies = ({url}: any) => {
               <Input placeholder="Company Name"/>
             </Form.Item>
             <Form.Item
+              name="domain"
+              rules={[{ required: true, message: 'Please input the domain!' }]}
+            >
+              <Input placeholder="Company Domain" />
+            </Form.Item>
+            <Form.Item
                 valuePropName={"checked"}
                 style={{fontWeight: "bold", fontSize: 18}}
                 label={"Status"}
@@ -277,6 +290,12 @@ const Companies = ({url}: any) => {
                 rules={[{required: true, message: 'Please input the Name!'}]}
             >
               <Input placeholder="Company Name"/>
+            </Form.Item>
+            <Form.Item
+              name="domain"
+              rules={[{ required: true, message: 'Please input the domain!' }]}
+            >
+              <Input placeholder="Company Domain" />
             </Form.Item>
             <Form.Item
                 valuePropName={"checked"}

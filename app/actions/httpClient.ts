@@ -68,6 +68,7 @@ const httpClient = (baseUrl: string, token?: string) => {
     name: any | null,
     logo_id: any | null,
     status: string,
+    domain:string
 
   }
 
