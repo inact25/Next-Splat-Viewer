@@ -5,17 +5,19 @@ import { Camera } from 'three';
 import Image from 'next/image';
 
 export default function GaussianSplat({
-  src,
-
+                                        src,
+                                        isAnimate,
+                                        thumbnail,
                                       }: {
   src: string;
   camera?: Camera;
+  isAnimate?: boolean;
+  thumbnail?: string
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const [rootElementId] = useState(
     `gaussian-splat-viewer-${Math.random().toString(36).substring(2)}`
   );
-
 
   useEffect(() => {
     const rootElement = document.getElementById(rootElementId);
@@ -33,6 +35,7 @@ export default function GaussianSplat({
       sphericalHarmonicsDegree: 2,
       rootElement: rootElement,
       sharedMemoryForWorkers: false,
+      sceneRevealMode: isAnimate ? GaussianSplats3D.SceneRevealMode.Instant : GaussianSplats3D.SceneRevealMode.Gradual,
     });
 
     viewer
@@ -60,7 +63,11 @@ export default function GaussianSplat({
       {isLoading &&
         <div className="min-h-[100dvh] absolute z-9999 w-full flex justify-center items-center bg-[#233736]">
           <div>
-            <Image width={200} height={200} alt="loading logo" src={'/greenview.jpeg'} />
+            {!!thumbnail?.length ?
+              <img src={thumbnail} className='mb-10 rounded-lg' alt="logo" style={{ width: 150, height: 150 }} />
+              :
+              <Image width={200} height={200} alt="loading logo" src={'/greenview.jpeg'} />
+            }
             <div role="status" className="text-center flex justify-center gap-5 items-center text-[#98b8a7]">
               <svg aria-hidden="true"
                    className="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-green-500"
@@ -77,7 +84,7 @@ export default function GaussianSplat({
           </div>
         </div>
       }
-        <div className="h-full w-full" id={rootElementId}></div>
+      <div className="h-full w-full" id={rootElementId}></div>
 
     </>
   );

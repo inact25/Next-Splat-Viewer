@@ -3,7 +3,7 @@
 import httpClient from '@/app/actions/httpClient';
 import { ListFilesResponse } from '@/app/actions/http';
 import { useEffect, useState } from 'react';
-import { Button, Card, Form, Input, message, Modal, Select, Space, Table, Upload, UploadProps } from 'antd';
+import { Button, Card, Form, Input, message, Modal, Select, Space, Switch, Table, Upload, UploadProps } from 'antd';
 import { CloudUploadOutlined, DeleteFilled, EditFilled } from '@ant-design/icons';
 
 const { Dragger } = Upload;
@@ -73,7 +73,8 @@ const Splat = ({url}: any) => {
         title: values.title,
         description: values.description,
         thumbnail_id: thumbnailFile.responseObject.id,
-        company_id: Number(companyId)
+        company_id: Number(companyId),
+        is_animated: values.is_animated,
       });
       message.success('File Registered successfully');
       handleRefetch();
@@ -190,7 +191,8 @@ const Splat = ({url}: any) => {
         title: values.title,
         description: values.description,
         thumbnail_id: thumbnailFile.responseObject.id,
-        company_id: companyId
+        company_id: companyId,
+        is_animated: values.is_animated
       });
       message.success('File Registered successfully');
       handleRefetch();
@@ -290,7 +292,7 @@ const Splat = ({url}: any) => {
         onCancel={() => setShowModal(false)}
         footer={null}
       >
-        <Form form={form} onFinish={handleCreate}>
+        <Form form={form} initialValues={{ is_animated: true }} onFinish={handleCreate}>
           <Form.Item
             name="file"
           >
@@ -335,6 +337,20 @@ const Splat = ({url}: any) => {
           >
             <Input.TextArea placeholder="Description"/>
           </Form.Item>
+          <Form.Item
+            valuePropName={'checked'}
+            style={{ fontWeight: 'bold', fontSize: 18 }}
+            label={'Enable Animation'}
+            name={'is_animated'}
+            rules={[{ required: true, message: 'Please set Animation Status!' }]}
+          >
+            <Switch
+              checkedChildren="Enable"
+              unCheckedChildren="Disable"
+              defaultChecked
+              defaultValue={true}
+            />
+          </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading}>
               Upload
@@ -348,7 +364,7 @@ const Splat = ({url}: any) => {
         onCancel={() => setEditingFile(null)}
         footer={null}
       >
-        <Form form={editForm} onFinish={handleEdit}>
+        <Form form={editForm} initialValues={{ is_animated: true }} onFinish={handleEdit}>
           <Form.Item
             name="file"
           >
@@ -393,6 +409,20 @@ const Splat = ({url}: any) => {
           >
             <Input.TextArea placeholder="Description"/>
           </Form.Item>
+          <Form.Item
+            valuePropName={'checked'}
+            style={{ fontWeight: 'bold', fontSize: 18 }}
+            label={'Enable Animation'}
+            name={'is_animated'}
+            rules={[{ required: true, message: 'Please set Animation Status!' }]}
+          >
+            <Switch
+              checkedChildren="Enable"
+              unCheckedChildren="Disable"
+              defaultChecked
+              defaultValue={true}
+            />
+          </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={loading}>
               Save
@@ -405,13 +435,13 @@ const Splat = ({url}: any) => {
                onCancel={() => setRecordData({})}>
           <div style={{ marginBottom: '2rem' }} className="preview">
             <iframe
-              src={`https://${window.location.hostname}/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`}
+              src={`https://${window.location.hostname}/s/${recordData.slug}.splat`}
               title="${record.title}" style={{ width: '100%', height: 300, border: 'none' }}></iframe>
             <div className="text-center mt-[-3rem] mb-[3rem]"><Button
-              onClick={() => window.open(`https://${window.location.hostname}/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`, '_blank')}>Full
+              onClick={() => window.open(`https://${window.location.hostname}/s/${recordData.slug}.splat`, '_blank')}>Full
               Preview</Button></div>
           </div>
-          <h5 style={{ fontWeight: 600, marginBottom: '.5rem' }}>Url</h5>
+          <h5 style={{ fontWeight: 600, marginBottom: '.5rem' }}>Private Url</h5>
           <div style={{ marginBottom: '2rem', display: 'flex', gap: 5, justifyContent: 'space-between' }}>
             <div style={{ width: '80%' }}>
               <Input disabled
@@ -420,6 +450,22 @@ const Splat = ({url}: any) => {
             <div style={{ width: 'auto' }}>
               <Button onClick={() => {
                 navigator.clipboard.writeText(`https://${window.location.hostname}/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`).then(() => {
+                  message.success('Copied to Clipboard');
+                }).catch(err => {
+                  message.error('Could not copy text: ', err);
+                });
+              }}>Copy Url</Button>
+            </div>
+          </div>
+          <h5 style={{ fontWeight: 600, marginBottom: '.5rem' }}>Public Url</h5>
+          <div style={{ marginBottom: '2rem', display: 'flex', gap: 5, justifyContent: 'space-between' }}>
+            <div style={{ width: '80%' }}>
+              <Input disabled
+                     value={`https://${window.location.hostname}/s/${recordData.slug}`} />
+            </div>
+            <div style={{ width: 'auto' }}>
+              <Button onClick={() => {
+                navigator.clipboard.writeText(`https://${window.location.hostname}/s/${recordData.slug}`).then(() => {
                   message.success('Copied to Clipboard');
                 }).catch(err => {
                   message.error('Could not copy text: ', err);

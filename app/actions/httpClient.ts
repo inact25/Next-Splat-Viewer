@@ -134,7 +134,14 @@ const httpClient = (baseUrl: string, token?: string) => {
   }
 
   //NEW SPLAT
-  const createSplat = async (body: editSplatProps) => {
+  const createSplat = async (body: {
+    thumbnail_id: any;
+    is_animated: any;
+    company_id: number;
+    storage_id: any;
+    description: any;
+    title: any
+  }) => {
     return axiosClient
         .post(`/splat/create`, body, {
           headers: {
@@ -143,7 +150,14 @@ const httpClient = (baseUrl: string, token?: string) => {
         })
         .then((response) => response.data);
   };
-  const editSplat = async (body: editSplatProps) => {
+  const editSplat = async (body: {
+    thumbnail_id: any;
+    is_animated: any;
+    company_id: number;
+    storage_id: any;
+    description: any;
+    title: any
+  }) => {
     return axiosClient
         .put(`/splat/update/${body.id}`, body, {
           headers: {
