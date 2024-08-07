@@ -405,8 +405,11 @@ const Splat = ({url}: any) => {
                onCancel={() => setRecordData({})}>
           <div style={{ marginBottom: '2rem' }} className="preview">
             <iframe
-              src={`http://${window.location.hostname}:3000/world/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`}
+              src={`https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`}
               title="${record.title}" style={{ width: '100%', height: 300, border: 'none' }}></iframe>
+            <div className="text-center mt-[-3rem] mb-[3rem]"><Button
+              onClick={() => window.open(`https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`, '_blank')}>Full
+              Preview</Button></div>
           </div>
           <h5 style={{ fontWeight: 600, marginBottom: '.5rem' }}>Url</h5>
           <div style={{ marginBottom: '2rem', display: 'flex', gap: 5, justifyContent: 'space-between' }}>
