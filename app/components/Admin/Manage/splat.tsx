@@ -187,6 +187,7 @@ const Splat = ({url}: any) => {
       const splatFile = await http.fileUploader(values.file.file)
       const thumbnailFile = await http.fileUploader(values.thumbnail.file)
       const response = await http.editSplat({
+        id: editingFile?.id,
         storage_id: splatFile.responseObject.id,
         title: values.title,
         description: values.description,

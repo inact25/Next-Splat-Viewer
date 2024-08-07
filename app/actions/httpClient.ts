@@ -151,6 +151,7 @@ const httpClient = (baseUrl: string, token?: string) => {
         .then((response) => response.data);
   };
   const editSplat = async (body: {
+    id?:number;
     thumbnail_id: any;
     is_animated: any;
     company_id: number;

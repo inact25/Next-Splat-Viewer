@@ -31,16 +31,16 @@ const Page = async (props: any) => {
   const { storage_url, is_animated } = data.responseObject.splat;
   const { logo_url } = data.responseObject.company;
 
-  const isAllowedIframe = () => {
-    const allowedDomains = [logo_url];
-    const referrer = document.referrer;
-
-    if (referrer) {
-      const referrerDomain = (new URL(referrer)).hostname;
-      return window.self !== window.top && allowedDomains.includes(referrerDomain);
-    }
-    return false;
-  };
+  // const isAllowedIframe = () => {
+  //   const allowedDomains = [logo_url];
+  //   const referrer = document.referrer;
+  //
+  //   if (referrer) {
+  //     const referrerDomain = (new URL(referrer)).hostname;
+  //     return window.self !== window.top && allowedDomains.includes(referrerDomain);
+  //   }
+  //   return false;
+  // };
 
 
   // if (isAllowedIframe()) {
