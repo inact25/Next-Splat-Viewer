@@ -24,8 +24,8 @@ const Splat = ({url}: any) => {
     multiple: false,
     beforeUpload: (file) => {
       const fileSizeMB = file.size / 1000000; // Convert bytes to MB
-      if (fileSizeMB > 20) {
-        message.error('File size exceeds 20MB');
+      if (fileSizeMB > 150) {
+        message.error('File size exceeds 150MB');
         return Upload.LIST_IGNORE; // Prevent upload and remove the file from the list
       }
       form.setFieldsValue({file: file})
@@ -40,8 +40,8 @@ const Splat = ({url}: any) => {
     multiple: false,
     beforeUpload: (file) => {
       const fileSizeMB = file.size / 1000000; // Convert bytes to MB
-      if (fileSizeMB > 20) {
-        message.error('File size exceeds 20MB');
+      if (fileSizeMB > 150) {
+        message.error('File size exceeds 150MB');
         return Upload.LIST_IGNORE; // Prevent upload and remove the file from the list
       }
       form.setFieldsValue({thumbnail: file})
@@ -302,7 +302,7 @@ const Splat = ({url}: any) => {
                 Click or drag file to this area to upload
               </p>
               <p className="ant-upload-hint">
-                Accept only .splat file and file size must be smaller than 20MB
+                Accept only .splat file and file size must be smaller than 150MB
               </p>
             </Dragger>
           </Form.Item>
@@ -317,7 +317,7 @@ const Splat = ({url}: any) => {
                 Click or drag thumbnail to this area to upload
               </p>
               <p className="ant-upload-hint">
-                Accept only image files and file size must be smaller than 20MB
+                Accept only image files and file size must be smaller than 150MB
               </p>
             </Dragger>
           </Form.Item>
@@ -360,7 +360,7 @@ const Splat = ({url}: any) => {
                 Click or drag file to this area to upload
               </p>
               <p className="ant-upload-hint">
-                Accept only .splat file and file size must be smaller than 20MB
+                Accept only .splat file and file size must be smaller than 150MB
               </p>
             </Dragger>
           </Form.Item>
@@ -375,7 +375,7 @@ const Splat = ({url}: any) => {
                 Click or drag thumbnail to this area to upload
               </p>
               <p className="ant-upload-hint">
-                Accept only image files and file size must be smaller than 20MB
+                Accept only image files and file size must be smaller than 150MB
               </p>
             </Dragger>
           </Form.Item>
@@ -405,21 +405,21 @@ const Splat = ({url}: any) => {
                onCancel={() => setRecordData({})}>
           <div style={{ marginBottom: '2rem' }} className="preview">
             <iframe
-              src={`https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`}
+              src={`https://${window.location.hostname}/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`}
               title="${record.title}" style={{ width: '100%', height: 300, border: 'none' }}></iframe>
             <div className="text-center mt-[-3rem] mb-[3rem]"><Button
-              onClick={() => window.open(`https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`, '_blank')}>Full
+              onClick={() => window.open(`https://${window.location.hostname}/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`, '_blank')}>Full
               Preview</Button></div>
           </div>
           <h5 style={{ fontWeight: 600, marginBottom: '.5rem' }}>Url</h5>
           <div style={{ marginBottom: '2rem', display: 'flex', gap: 5, justifyContent: 'space-between' }}>
             <div style={{ width: '80%' }}>
               <Input disabled
-                     value={`https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`} />
+                     value={`https://${window.location.hostname}/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`} />
             </div>
             <div style={{ width: 'auto' }}>
               <Button onClick={() => {
-                navigator.clipboard.writeText(`https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`).then(() => {
+                navigator.clipboard.writeText(`https://${window.location.hostname}/${companyData?.company_name}/${companyToken}/${recordData.id}.splat`).then(() => {
                   message.success('Copied to Clipboard');
                 }).catch(err => {
                   message.error('Could not copy text: ', err);
@@ -432,11 +432,11 @@ const Splat = ({url}: any) => {
             <div style={{ marginBottom: '2rem', justifyContent: 'space-between' }}>
               <div>
                 <Input.TextArea style={{ marginBottom: '1rem' }} rows={3} disabled
-                                value={`<iframe src="https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${recordData.id}.splat" title="${recordData.title}" style="width:100%; height:100dvh; border:none;"></iframe>`} />
+                                value={`<iframe src="https://${window.location.hostname}/${companyData?.company_name}/${companyToken}/${recordData.id}.splat" title="${recordData.title}" style="width:100%; height:100dvh; border:none;"></iframe>`} />
               </div>
               <div>
                 <Button onClick={() => {
-                  const textToCopy = `<iframe src="https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${recordData.id}.splat" title="${recordData.title}" style="width:100%; height:100dvh; border:none;"></iframe>`;
+                  const textToCopy = `<iframe src="https://${window.location.hostname}/${companyData?.company_name}/${companyToken}/${recordData.id}.splat" title="${recordData.title}" style="width:100%; height:100dvh; border:none;"></iframe>`;
                   navigator.clipboard.writeText(textToCopy).then(() => {
                     message.success('Script Copied to Clipboard');
                   }).catch(err => {
