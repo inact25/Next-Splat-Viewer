@@ -28,9 +28,13 @@ const Page = async (props: any) => {
   const { params } = props;
   const data = await getData(params.token, params.splat);
   const { storage_url, is_animated } = data.responseObject.splat;
-  const { logo_url } = data.responseObject.company;
+  const { logo_url, domain } = data.responseObject.company;
   return (
     <>
+      <meta
+        httpEquiv="Content-Security-Policy"
+        content={`default-src 'self'; frame-ancestors 'self' ${domain};`}
+      />
       <GaussianSplat
         src={storage_url}
         isAnimate={is_animated}
