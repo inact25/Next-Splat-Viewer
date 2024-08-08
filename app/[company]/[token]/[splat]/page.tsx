@@ -14,14 +14,13 @@ const GaussianSplat = dynamic(() => import('@/app/components/GaussianSplat'), {
 });
 
 const getData = async (company: string, splat: string) => {
-  const res = await fetch(`${API_URL}/bridge/data/${company}/${splat}`);
-  return res.json();
+  const res = await fetch(`${API_URL}/bridge/data/${company}/${splat}`, {
+    cache: 'no-cache',
+  });
 
   if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
     throw new Error('Failed to fetch data');
   }
-
   return res.json();
 };
 
@@ -30,19 +29,6 @@ const Page = async (props: any) => {
   const data = await getData(params.token, params.splat);
   const { storage_url, is_animated } = data.responseObject.splat;
   const { logo_url } = data.responseObject.company;
-
-  // const isAllowedIframe = () => {
-  //   const allowedDomains = [logo_url];
-  //   const referrer = document.referrer;
-  //
-  //   if (referrer) {
-  //     const referrerDomain = (new URL(referrer)).hostname;
-  //     return window.self !== window.top && allowedDomains.includes(referrerDomain);
-  //   }
-  //   return false;
-  // };
-
-  // if (isAllowedIframe()) {
   return (
     <>
       <GaussianSplat
@@ -52,9 +38,6 @@ const Page = async (props: any) => {
       />
     </>
   );
-  // } else {
-  //   return <div>Your Sites doesn&apos;t have permission to show this file</div>;
-  // }
 };
 
 export default Page;
