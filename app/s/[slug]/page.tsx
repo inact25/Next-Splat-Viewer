@@ -14,7 +14,7 @@ const GaussianSplat = dynamic(() => import('@/app/components/GaussianSplat'), {
 });
 
 const getData = async (slug: string) => {
-  const res = await fetch(`${API_URL}/bridge/slug/${slug}`);
+  const res = await fetch(`${API_URL}/bridge/data/slug/${slug}`);
   return res.json();
 
   if (!res.ok) {
@@ -25,7 +25,6 @@ const getData = async (slug: string) => {
   return res.json();
 };
 
-
 const Page = async (props: any) => {
   const { params } = props;
   const data = await getData(params.slug);
@@ -33,9 +32,13 @@ const Page = async (props: any) => {
   const { logo_url } = data.responseObject.company;
   return (
     <>
-      {Object.keys(data) &&
-        <GaussianSplat src={storage_url} isAnimate={is_animated} thumbnail={logo_url} />
-      }
+      {Object.keys(data) && (
+        <GaussianSplat
+          src={storage_url}
+          isAnimate={is_animated}
+          thumbnail={logo_url}
+        />
+      )}
     </>
   );
 };
