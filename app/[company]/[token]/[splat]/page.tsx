@@ -6,15 +6,15 @@ import { API_URL } from '@/app/constant/config';
 export const metadata: Metadata = {
   title: 'Greenview - Viewer ',
   description: 'Greenview - Viewer',
-}
+};
 
 const GaussianSplat = dynamic(() => import('@/app/components/GaussianSplat'), {
   ssr: false,
   // loading: false,
 });
 
-const getData = async (company: string, splat:string) => {
-  const res = await fetch(`${API_URL}/bridge/${company}/${splat}`);
+const getData = async (company: string, splat: string) => {
+  const res = await fetch(`${API_URL}/bridge/data/${company}/${splat}`);
   return res.json();
 
   if (!res.ok) {
@@ -42,13 +42,16 @@ const Page = async (props: any) => {
   //   return false;
   // };
 
-
   // if (isAllowedIframe()) {
-    return (
-        <>
-          <GaussianSplat src={storage_url} isAnimate={is_animated} thumbnail={logo_url} />
-        </>
-    );
+  return (
+    <>
+      <GaussianSplat
+        src={storage_url}
+        isAnimate={is_animated}
+        thumbnail={logo_url}
+      />
+    </>
+  );
   // } else {
   //   return <div>Your Sites doesn&apos;t have permission to show this file</div>;
   // }
