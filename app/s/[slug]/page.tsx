@@ -14,14 +14,13 @@ const GaussianSplat = dynamic(() => import('@/app/components/GaussianSplat'), {
 });
 
 const getData = async (slug: string) => {
-  const res = await fetch(`${API_URL}/bridge/data/slug/${slug}`);
-  return res.json();
-
+  const res = await fetch(`${API_URL}/bridge/slug/${slug}`, {
+    cache: 'no-cache',
+  });
   if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
+    console.log(res, API_URL, slug);
     throw new Error('Failed to fetch data');
   }
-
   return res.json();
 };
 
