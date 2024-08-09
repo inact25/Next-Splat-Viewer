@@ -69,8 +69,8 @@ const Splat = ({ url }: any) => {
   const handleCreate = async (values: any) => {
     try {
       setLoading(true);
-      const splatFile = await http.fileUploader(values.file.file);
-      const thumbnailFile = await http.fileUploader(values.thumbnail.file);
+      const splatFile = values.file.file ? await http.fileUploader(values.file.file) : {responseObject: {id: ""}};
+      const thumbnailFile = values.thumbnail.file ? await http.fileUploader(values.thumbnail.file) : {responseObject: {id: ""}};
       const response = await http.createSplat({
         storage_id: splatFile.responseObject.id,
         title: values.title,
@@ -203,6 +203,7 @@ const Splat = ({ url }: any) => {
 
   const getData = async (slug: string) => {
     const res = await axios.get(`${url}bridge/slug/${slug}`)
+    setIsAnimate(res.data.responseObject?.splat?.is_animated)
     setSplatData(res.data.responseObject)
   }
 
@@ -215,8 +216,8 @@ const Splat = ({ url }: any) => {
   const handleEdit = async (values: any) => {
     try {
       setLoading(true);
-      const splatFile = await http.fileUploader(values.file.file);
-      const thumbnailFile = await http.fileUploader(values.thumbnail.file);
+      const splatFile = values.file.file ? await http.fileUploader(values.file.file) : {responseObject: {id: ""}};
+      const thumbnailFile = values.thumbnail.file ? await http.fileUploader(values.thumbnail.file) : {responseObject: {id: ""}};
       const response = await http.editSplat({
         id: editingFile?.id,
         storage_id: splatFile.responseObject.id,
