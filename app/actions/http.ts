@@ -1,4 +1,4 @@
-import { API_URL } from '@/app/constant/config';
+import {API_URL} from '@/app/constant/config';
 
 export type CommonResponse<T> = {
   success: boolean;
@@ -8,6 +8,8 @@ export type CommonResponse<T> = {
 };
 
 export type ListFilesResponse = {
+  storage_id?: string | null | number;
+  thumbnail_id?: string | null | number;
   id: number;
   created_at: string;
   thumbnail?: string;

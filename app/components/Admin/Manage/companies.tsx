@@ -2,7 +2,7 @@
 
 import httpClient from '@/app/actions/httpClient';
 import { ListFilesResponse } from '@/app/actions/http';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Card,
@@ -189,6 +189,8 @@ const Companies = ({ url }: any) => {
           values.logo[0].originFileObj,
         );
         payload.logo_id = uploadResp?.responseObject?.id ?? null;
+      } else {
+        payload.logo_id = editingFile.logo_id ? Number(editingFile.logo_id) : editingFile.logo_id;
       }
       const response = await http.editCompany(payload);
       message.success('Company update successfully');
@@ -337,6 +339,14 @@ const Companies = ({ url }: any) => {
                 Accept only image files and file size must be smaller than 20MB
               </p>
             </Dragger>
+          </Form.Item>
+          <Form.Item>
+            {editingFile?.logo_id &&
+                <Button onClick={() => {
+                  const dataField = {...editingFile}
+                  dataField.logo_id = null
+                  setEditingFile(dataField)
+                }}>Delete Thumbnail</Button>}
           </Form.Item>
           <Form.Item
             name="name"

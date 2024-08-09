@@ -216,15 +216,15 @@ const Splat = ({ url }: any) => {
   const handleEdit = async (values: any) => {
     try {
       setLoading(true);
-      const splatFile = values.file.file ? await http.fileUploader(values.file.file) : {responseObject: {id: ""}};
-      const thumbnailFile = values.thumbnail.file ? await http.fileUploader(values.thumbnail.file) : {responseObject: {id: ""}};
+      const splatFile = values.file ? await http.fileUploader(values.file.file) : {responseObject: {id: editingFile?.storage_id}};
+      const thumbnailFile = values.thumbnail ? await http.fileUploader(values.thumbnail.file) : {responseObject: {id: editingFile?.thumbnail_id}};
       const response = await http.editSplat({
         id: editingFile?.id,
-        storage_id: splatFile.responseObject.id,
+        storage_id: Number(splatFile.responseObject.id),
         title: values.title,
         description: values.description,
-        thumbnail_id: thumbnailFile.responseObject.id,
-        company_id: companyId,
+        thumbnail_id: thumbnailFile.responseObject.id ? Number(thumbnailFile.responseObject.id) : thumbnailFile.responseObject.id,
+        company_id: Number(companyId),
         is_animated: values.is_animated,
       });
       message.success('File Registered successfully');
@@ -242,9 +242,7 @@ const Splat = ({ url }: any) => {
     try {
       const response = await http.listCompanies(params);
       setListCompany(response.responseObject);
-      console.log(handleRefetch);
     } catch (error) {
-      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -256,9 +254,7 @@ const Splat = ({ url }: any) => {
     try {
       const response = await http.listSplat({ ...params, ...body });
       setListSplat(response.responseObject);
-      console.log(handleRefetch);
     } catch (error) {
-      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -443,6 +439,14 @@ const Splat = ({ url }: any) => {
                   150MB
                 </p>
               </Dragger>
+            </Form.Item>
+            <Form.Item>
+              {editingFile?.thumbnail_id &&
+                  <Button onClick={() => {
+                    const dataField = {...editingFile}
+                    dataField.thumbnail_id = null
+                    setEditingFile(dataField)
+                  }}>Delete Thumbnail</Button>}
             </Form.Item>
             <Form.Item
               name="title"
