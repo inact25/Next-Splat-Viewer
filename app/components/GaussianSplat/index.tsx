@@ -3,16 +3,19 @@ import React, { useEffect, useState } from 'react';
 import * as GaussianSplats3D from '@mkkellogg/gaussian-splats-3d';
 import { Camera } from 'three';
 import Image from 'next/image';
+import {className} from "postcss-selector-parser";
 
 export default function GaussianSplat({
                                         src,
                                         isAnimate,
                                         thumbnail,
+                                        className
                                       }: {
   src: string;
   camera?: Camera;
   isAnimate?: boolean;
-  thumbnail?: string
+  thumbnail?: string;
+  className?:string
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const [rootElementId] = useState(
@@ -61,7 +64,7 @@ export default function GaussianSplat({
   return (
     <>
       {isLoading &&
-        <div className="min-h-[100dvh] absolute z-9999 w-full flex justify-center items-center bg-[#233736]">
+        <div className={`${className} min-h-[100dvh] absolute z-9999 w-full flex justify-center items-center bg-[#233736]`}>
           <div>
             {!!thumbnail?.length ?
               <img src={thumbnail} className='mb-10 rounded-lg' alt="logo" style={{ width: 150, height: 150 }} />

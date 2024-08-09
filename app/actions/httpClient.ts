@@ -134,6 +134,10 @@ const httpClient = (baseUrl: string, token?: string) => {
   }
 
   //NEW SPLAT
+  const previewSplat = async (slug: string) => {
+    return axiosClient.get(`/bridge/slug/${slug}`).then((response) => response.data);
+  }
+
   const createSplat = async (body: {
     thumbnail_id: any;
     is_animated: any;
@@ -233,7 +237,8 @@ const httpClient = (baseUrl: string, token?: string) => {
     editCompany,
     fileUploader,
     createCompany,
-    generateToken
+    generateToken,
+    previewSplat
   };
 };
 

@@ -1,27 +1,12 @@
 'use client';
 
 import httpClient from '@/app/actions/httpClient';
-import { ListFilesResponse } from '@/app/actions/http';
-import { useEffect, useState } from 'react';
-import {
-  Button,
-  Card,
-  Form,
-  Input,
-  message,
-  Modal,
-  Select,
-  Space,
-  Switch,
-  Table,
-  Upload,
-  UploadProps,
-} from 'antd';
-import {
-  CloudUploadOutlined,
-  DeleteFilled,
-  EditFilled,
-} from '@ant-design/icons';
+import {ListFilesResponse} from '@/app/actions/http';
+import React, {useEffect, useState} from 'react';
+import {Button, Card, Form, Input, message, Modal, Select, Space, Switch, Table, Upload, UploadProps,} from 'antd';
+import {CloudUploadOutlined, DeleteFilled, EditFilled,} from '@ant-design/icons';
+import axios from "axios";
+import GaussianSplat from "@/app/components/GaussianSplat";
 
 const { Dragger } = Upload;
 const Splat = ({ url }: any) => {
@@ -34,6 +19,7 @@ const Splat = ({ url }: any) => {
   const [editingFile, setEditingFile] = useState<ListFilesResponse | null>(
     null,
   );
+  const [isAnimate, setIsAnimate] = useState(true)
   const [params, setParams] = useState({ limit: 10, page: 1, company_id: 0 });
 
   const props: UploadProps = {
@@ -110,6 +96,7 @@ const Splat = ({ url }: any) => {
   const [refetch, setRefetch] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [splatData, setSplatData] = useState<any>()
   const columns = [
     {
       title: 'ID',
@@ -213,6 +200,17 @@ const Splat = ({ url }: any) => {
   const handleRefetch = () => {
     setRefetch(!refetch);
   };
+
+  const getData = async (slug: string) => {
+    const res = await axios.get(`${url}bridge/slug/${slug}`)
+    setSplatData(res.data.responseObject)
+  }
+
+  useEffect(() => {
+    if (recordData.slug) {
+      getData(recordData.slug)
+    }
+  }, [recordData.slug, isAnimate]);
 
   const handleEdit = async (values: any) => {
     try {
@@ -489,24 +487,65 @@ const Splat = ({ url }: any) => {
             onOk={() => setRecordData({})}
             onCancel={() => setRecordData({})}
           >
-            <div style={{ marginBottom: '2rem' }} className="preview">
-              <iframe
-                src={`https://${window.location.hostname}/s/${recordData.slug}`}
-                title="${record.title}"
-                style={{ width: '100%', height: 300, border: 'none' }}
-              ></iframe>
-              <div className="text-center mt-[-3rem] mb-[3rem]">
-                <Button
-                  onClick={() =>
-                    window.open(
-                      `https://${window.location.hostname}/s/${recordData.slug}`,
-                      '_blank',
-                    )
-                  }
-                >
-                  Full Preview
-                </Button>
-              </div>
+            <div style={{marginBottom: '2rem', height: 300}} className="preview relative">
+              {splatData && Object.keys(splatData) ?
+                  <>
+                    <GaussianSplat
+                        src={splatData?.splat?.storage_url}
+                        isAnimate={isAnimate}
+                        thumbnail={""}
+                        className={"!h-[300px] !min-h-[300px] !max-h-[300px] border"}
+                    />
+                    <div className='mt-[-3rem] mb-10'>
+                      <div className="flex justify-between items-center px-4">
+                        <div>
+                          <div className="flex gap-2 items-center">
+                            <div>
+                              <Button
+                                  className={`${isAnimate ? '!bg-green-900 !text-white' : '!bg-white text-green-900'} font-bold `}
+                                  onClick={() => {
+                                    setIsAnimate(true)
+                                    setSplatData(null)
+                                  }
+                                  }
+                              >
+                                Static
+                              </Button>
+                            </div>
+                            <div>
+                              <Button
+                                  className={`${!isAnimate ? '!bg-green-900 !text-white' : '!bg-white text-green-900'} font-bold `}
+                                  onClick={() => {
+                                    setIsAnimate(false)
+                                    setSplatData(null)
+                                  }
+                                  }
+                              >
+                                Animate
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          <Button
+                              onClick={() =>
+                                  window.open(
+                                      `https://${window.location.hostname}/s/${recordData.slug}`,
+                                      '_blank',
+                                  )
+                              }
+                          >
+                            Full Preview
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                  :
+                  <div className='w-full h-full flex items-center justify-center'>
+                    Downloading Splat file...
+                  </div>
+              }
             </div>
             <h5 style={{ fontWeight: 600, marginBottom: '.5rem' }}>
               Private Url
