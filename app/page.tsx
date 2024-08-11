@@ -1,5 +1,5 @@
 import React from 'react';
-import type {Metadata} from 'next';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Greenview - Viewer ',
@@ -9,18 +9,16 @@ export const metadata: Metadata = {
 const Home = async () => {
   return (
     <>
-      <div
-          className="h-screen w-full flex flex-col justify-center items-center bg-gray-900">
-        <div
-            className="absolute animate-bounce z-10 w-full h-[50%] flex justify-center items-end bg-gray-900">
+      <div className="h-screen w-full flex flex-col justify-center items-center bg-gray-900">
+        <div className="absolute animate-bounce z-10 w-full h-[50%] flex justify-center items-end bg-gray-900">
           <h1 className="sm:text-9xl text-7xl font-extrabold animate-[wiggle_1s_ease-in-out_infinite] text-white font-mono">
-            Coming</h1>
+            Coming
+          </h1>
         </div>
-        <div
-            className="absolute w-full h-[50%] flex items-end justify-center bg-gray-900">
-          <h1
-              className="sm:text-7xl text-5xl animate-[wiggle_1s_ease-in-out_infinite] text-center text-white font-extrabold">
-            Soon</h1>
+        <div className="absolute w-full h-[50%] flex items-end justify-center bg-gray-900">
+          <h1 className="sm:text-7xl text-5xl animate-[wiggle_1s_ease-in-out_infinite] text-center text-white font-extrabold">
+            Soon
+          </h1>
         </div>
       </div>
       {/*<div className="bg-gray-900 p-5 xl:p-10 text-white">*/}

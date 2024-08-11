@@ -1,9 +1,13 @@
 'use client';
-import React, {useState} from 'react';
-import {Button, Col, Layout, Menu, Row, theme} from 'antd';
-import {MenuFoldOutlined, MenuUnfoldOutlined, SettingFilled,} from '@ant-design/icons';
+import React, { useState } from 'react';
+import { Button, Col, Layout, Menu, Row, theme } from 'antd';
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  SettingFilled,
+} from '@ant-design/icons';
 import Image from 'next/image';
-import {useRouter} from "next/navigation";
+import { useRouter } from 'next/navigation';
 
 const { Sider, Header, Content } = Layout;
 
@@ -17,7 +21,7 @@ const LayoutAuth = ({ children }: any) => {
     window.location.href = '/admin';
   };
 
-    const router = useRouter()
+  const router = useRouter();
 
   return (
     <Layout
@@ -41,19 +45,19 @@ const LayoutAuth = ({ children }: any) => {
         <Menu
           theme="dark"
           mode="inline"
-          onClick={e => router.push(e.key)}
+          onClick={(e) => router.push(e.key)}
           defaultSelectedKeys={['1']}
           items={[
-              {
-                  key: 'manage',
-                  icon: <SettingFilled/>,
-                  label: 'All Splat Files',
-              },
-              {
-                  key: 'companies   ',
-                  icon: <SettingFilled/>,
-                  label: 'All Companies',
-              },
+            {
+              key: 'manage',
+              icon: <SettingFilled />,
+              label: 'All Splat Files',
+            },
+            {
+              key: 'companies   ',
+              icon: <SettingFilled />,
+              label: 'All Companies',
+            },
           ]}
         />
       </Sider>

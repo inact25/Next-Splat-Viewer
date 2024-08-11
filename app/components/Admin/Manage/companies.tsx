@@ -190,7 +190,9 @@ const Companies = ({ url }: any) => {
         );
         payload.logo_id = uploadResp?.responseObject?.id ?? null;
       } else {
-        payload.logo_id = editingFile.logo_id ? Number(editingFile.logo_id) : editingFile.logo_id;
+        payload.logo_id = editingFile.logo_id
+          ? Number(editingFile.logo_id)
+          : editingFile.logo_id;
       }
       const response = await http.editCompany(payload);
       message.success('Company update successfully');
@@ -341,12 +343,17 @@ const Companies = ({ url }: any) => {
             </Dragger>
           </Form.Item>
           <Form.Item>
-            {editingFile?.logo_id &&
-                <Button onClick={() => {
-                  const dataField = {...editingFile}
-                  dataField.logo_id = null
-                  setEditingFile(dataField)
-                }}>Delete Thumbnail</Button>}
+            {editingFile?.logo_id && (
+              <Button
+                onClick={() => {
+                  const dataField = { ...editingFile };
+                  dataField.logo_id = null;
+                  setEditingFile(dataField);
+                }}
+              >
+                Delete Thumbnail
+              </Button>
+            )}
           </Form.Item>
           <Form.Item
             name="name"
