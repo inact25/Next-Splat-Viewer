@@ -72,18 +72,21 @@ const Companies = ({ url }: any) => {
       title: 'Logo',
       dataIndex: 'logo_url',
       key: 'logo_url',
-      render: (e: any) => (
-        <img
-          style={{
-            width: 50,
-            height: 50,
-            objectFit: 'cover',
-            borderRadius: '10rem',
-          }}
-          src={e}
-          alt="logo"
-        />
-      ),
+      render: (e: any) => {
+        e = e === '' ? null : e;
+        return (
+          <img
+            style={{
+              objectFit: 'cover',
+              borderRadius: '10rem',
+              width: '50px',
+              height: '50px',
+            }}
+            src={e ?? '/greenview.jpeg'}
+            alt="logo"
+          />
+        );
+      },
     },
     {
       title: 'Company name',
@@ -157,9 +160,12 @@ const Companies = ({ url }: any) => {
   const handleCreate = async (values: any) => {
     try {
       setLoading(true);
-      const uploadResp = await http.fileUploader(values.logo[0].originFileObj);
-      const response = await http.createCompany({
-        logo_id: uploadResp.responseObject.id,
+      let uploadResp = null;
+      if (values?.logo && values?.logo?.length > 0) {
+        uploadResp = await http.fileUploader(values.logo[0].originFileObj);
+      }
+      await http.createCompany({
+        logo_id: uploadResp?.responseObject?.id ?? null,
         name: values.name,
         status: values.status,
         domain: values.domain,
@@ -190,9 +196,11 @@ const Companies = ({ url }: any) => {
         );
         payload.logo_id = uploadResp?.responseObject?.id ?? null;
       } else {
-        payload.logo_id = editingFile.logo_id ? Number(editingFile.logo_id) : editingFile.logo_id;
+        payload.logo_id = editingFile.logo_id
+          ? Number(editingFile.logo_id)
+          : editingFile.logo_id;
       }
-      const response = await http.editCompany(payload);
+      await http.editCompany(payload);
       message.success('Company update successfully');
       handleRefetch();
       setEditingFile(null);
@@ -221,14 +229,16 @@ const Companies = ({ url }: any) => {
   }, [refetch]);
   useEffect(() => {
     if (editingFile) {
-      editForm.setFieldsValue({
-        id: editingFile.id,
-        logo_id: editingFile.logo_id,
-        name: editingFile.name,
-        status: editingFile.status,
-      });
+      editForm.resetFields();
+      editForm.setFieldsValue(editingFile);
     }
   }, [editingFile]);
+
+  useEffect(() => {
+    if (showModal) {
+      form.resetFields();
+    }
+  }, [showModal]);
 
   return (
     <Card
@@ -237,7 +247,6 @@ const Companies = ({ url }: any) => {
         <Button
           type="primary"
           onClick={() => {
-            form.resetFields();
             setShowModal(true);
           }}
         >
@@ -329,24 +338,45 @@ const Companies = ({ url }: any) => {
             getValueFromEvent={(e) => e.fileList}
           >
             <Dragger {...props}>
-              <p className="ant-upload-drag-icon">
-                <CloudUploadOutlined />
-              </p>
-              <p className="ant-upload-text">
-                Click or drag logo to this area to upload
-              </p>
-              <p className="ant-upload-hint">
-                Accept only image files and file size must be smaller than 20MB
-              </p>
+              {editingFile?.logo_url ? (
+                <img
+                  style={{
+                    objectFit: 'cover',
+                    height: 'auto',
+                    width: '100%',
+                  }}
+                  src={editingFile?.logo_url}
+                  alt="logo"
+                />
+              ) : (
+                <>
+                  <p className="ant-upload-drag-icon">
+                    <CloudUploadOutlined />
+                  </p>
+                  <p className="ant-upload-text">
+                    Click or drag logo to this area to upload
+                  </p>
+                  <p className="ant-upload-hint">
+                    Accept only image files and file size must be smaller than
+                    20MB
+                  </p>
+                </>
+              )}
             </Dragger>
           </Form.Item>
           <Form.Item>
-            {editingFile?.logo_id &&
-                <Button onClick={() => {
-                  const dataField = {...editingFile}
-                  dataField.logo_id = null
-                  setEditingFile(dataField)
-                }}>Delete Thumbnail</Button>}
+            {editingFile?.logo_id && (
+              <Button
+                onClick={() => {
+                  const dataField = { ...editingFile };
+                  dataField.logo_id = null;
+                  dataField.logo_url = null;
+                  setEditingFile(dataField);
+                }}
+              >
+                Delete Logo
+              </Button>
+            )}
           </Form.Item>
           <Form.Item
             name="name"

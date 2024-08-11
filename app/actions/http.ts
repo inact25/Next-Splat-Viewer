@@ -1,4 +1,4 @@
-import {API_URL} from '@/app/constant/config';
+import { API_URL } from '@/app/constant/config';
 
 export type CommonResponse<T> = {
   success: boolean;
@@ -9,10 +9,12 @@ export type CommonResponse<T> = {
 
 export type ListFilesResponse = {
   storage_id?: string | null | number;
+  storage_url?: string | null | number;
   thumbnail_id?: string | null | number;
   id: number;
   created_at: string;
   thumbnail?: string;
+  thumbnail_url?: string;
   title?: string;
   description?: string;
 };
@@ -25,7 +27,6 @@ export type ListCompaniesResponse = {
   name?: string;
   status?: boolean;
 };
-
 
 export const listFiles = async (): Promise<
   CommonResponse<ListFilesResponse[]>

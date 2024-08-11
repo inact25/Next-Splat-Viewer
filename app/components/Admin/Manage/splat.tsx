@@ -1,12 +1,29 @@
 'use client';
 
 import httpClient from '@/app/actions/httpClient';
-import {ListFilesResponse} from '@/app/actions/http';
-import React, {useEffect, useState} from 'react';
-import {Button, Card, Form, Input, message, Modal, Select, Space, Switch, Table, Upload, UploadProps,} from 'antd';
-import {CloudUploadOutlined, DeleteFilled, EditFilled,} from '@ant-design/icons';
-import axios from "axios";
-import GaussianSplat from "@/app/components/GaussianSplat";
+import { ListFilesResponse } from '@/app/actions/http';
+import React, { useEffect, useState } from 'react';
+import {
+  Button,
+  Card,
+  Form,
+  Input,
+  message,
+  Modal,
+  Select,
+  Space,
+  Switch,
+  Table,
+  Upload,
+  UploadProps,
+} from 'antd';
+import {
+  CloudUploadOutlined,
+  DeleteFilled,
+  EditFilled,
+} from '@ant-design/icons';
+import axios from 'axios';
+import GaussianSplat from '@/app/components/GaussianSplat';
 
 const { Dragger } = Upload;
 const Splat = ({ url }: any) => {
@@ -19,7 +36,7 @@ const Splat = ({ url }: any) => {
   const [editingFile, setEditingFile] = useState<ListFilesResponse | null>(
     null,
   );
-  const [isAnimate, setIsAnimate] = useState(true)
+  const [isAnimate, setIsAnimate] = useState(true);
   const [params, setParams] = useState({ limit: 10, page: 1, company_id: 0 });
 
   const props: UploadProps = {
@@ -43,7 +60,7 @@ const Splat = ({ url }: any) => {
     multiple: false,
     beforeUpload: (file) => {
       const fileSizeMB = file.size / 1000000; // Convert bytes to MB
-      if (fileSizeMB > 150) {
+      if (fileSizeMB > 10) {
         message.error('File size exceeds 150MB');
         return Upload.LIST_IGNORE; // Prevent upload and remove the file from the list
       }
@@ -69,13 +86,15 @@ const Splat = ({ url }: any) => {
   const handleCreate = async (values: any) => {
     try {
       setLoading(true);
-      const splatFile = values.file.file ? await http.fileUploader(values.file.file) : {responseObject: {id: ""}};
-      const thumbnailFile = values.thumbnail.file ? await http.fileUploader(values.thumbnail.file) : {responseObject: {id: ""}};
-      const response = await http.createSplat({
+      const splatFile = await http.fileUploader(values.file.file);
+      const thumbnailFile = values?.thumbnail?.file
+        ? await http.fileUploader(values.thumbnail.file)
+        : { responseObject: { id: null } };
+      await http.createSplat({
         storage_id: splatFile.responseObject.id,
         title: values.title,
         description: values.description,
-        thumbnail_id: thumbnailFile.responseObject.id,
+        thumbnail_id: thumbnailFile?.responseObject?.id ?? null,
         company_id: Number(companyId),
         is_animated: values.is_animated,
       });
@@ -96,7 +115,7 @@ const Splat = ({ url }: any) => {
   const [refetch, setRefetch] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [splatData, setSplatData] = useState<any>()
+  const [splatData, setSplatData] = useState<any>();
   const columns = [
     {
       title: 'ID',
@@ -117,10 +136,11 @@ const Splat = ({ url }: any) => {
       title: 'Thumbnail',
       dataIndex: 'thumbnail_url',
       key: 'thumbnail_url',
-      render: (text: string) => {
+      render: (text: any) => {
+        text = text === '' ? null : text;
         return (
           <img
-            src={text}
+            src={text ?? '/greenview.jpeg'}
             alt={text}
             style={{
               width: 50,
@@ -202,28 +222,34 @@ const Splat = ({ url }: any) => {
   };
 
   const getData = async (slug: string) => {
-    const res = await axios.get(`${url}bridge/slug/${slug}`)
-    setIsAnimate(res.data.responseObject?.splat?.is_animated)
-    setSplatData(res.data.responseObject)
-  }
+    const res = await axios.get(`${url}bridge/slug/${slug}`);
+    setIsAnimate(res.data.responseObject?.splat?.is_animated);
+    setSplatData(res.data.responseObject);
+  };
 
   useEffect(() => {
     if (recordData.slug) {
-      getData(recordData.slug)
+      getData(recordData.slug);
     }
   }, [recordData.slug, isAnimate]);
 
   const handleEdit = async (values: any) => {
     try {
       setLoading(true);
-      const splatFile = values.file ? await http.fileUploader(values.file.file) : {responseObject: {id: editingFile?.storage_id}};
-      const thumbnailFile = values.thumbnail ? await http.fileUploader(values.thumbnail.file) : {responseObject: {id: editingFile?.thumbnail_id}};
+      const splatFile = values.file
+        ? await http.fileUploader(values.file.file)
+        : { responseObject: { id: editingFile?.storage_id } };
+      const thumbnailFile = values.thumbnail
+        ? await http.fileUploader(values.thumbnail.file)
+        : { responseObject: { id: editingFile?.thumbnail_id } };
       const response = await http.editSplat({
         id: editingFile?.id,
         storage_id: Number(splatFile.responseObject.id),
         title: values.title,
         description: values.description,
-        thumbnail_id: thumbnailFile.responseObject.id ? Number(thumbnailFile.responseObject.id) : thumbnailFile.responseObject.id,
+        thumbnail_id: thumbnailFile.responseObject.id
+          ? Number(thumbnailFile.responseObject.id)
+          : thumbnailFile.responseObject.id,
         company_id: Number(companyId),
         is_animated: values.is_animated,
       });
@@ -428,25 +454,45 @@ const Splat = ({ url }: any) => {
             </Form.Item>
             <Form.Item name="thumbnail">
               <Dragger {...props}>
-                <p className="ant-upload-drag-icon">
-                  <CloudUploadOutlined />
-                </p>
-                <p className="ant-upload-text">
-                  Click or drag thumbnail to this area to upload
-                </p>
-                <p className="ant-upload-hint">
-                  Accept only image files and file size must be smaller than
-                  150MB
-                </p>
+                {editingFile?.thumbnail_url ? (
+                  <img
+                    src={editingFile?.thumbnail_url}
+                    style={{
+                      objectFit: 'cover',
+                      width: '100%',
+                      height: 'auto',
+                    }}
+                  />
+                ) : (
+                  <>
+                    <p className="ant-upload-drag-icon">
+                      <CloudUploadOutlined />
+                    </p>
+                    <p className="ant-upload-text">
+                      Click or drag thumbnail to this area to upload
+                    </p>
+                    <p className="ant-upload-hint">
+                      Accept only image files and file size must be smaller than
+                      10MB
+                    </p>
+                  </>
+                )}
               </Dragger>
             </Form.Item>
             <Form.Item>
-              {editingFile?.thumbnail_id &&
-                  <Button onClick={() => {
-                    const dataField = {...editingFile}
-                    dataField.thumbnail_id = null
-                    setEditingFile(dataField)
-                  }}>Delete Thumbnail</Button>}
+              {editingFile?.thumbnail_id && (
+                <Button
+                  onClick={() => {
+                    const dataField = { ...editingFile };
+                    dataField.thumbnail_id = null;
+                    // @ts-ignore
+                    dataField.thumbnail_url = null;
+                    setEditingFile(dataField);
+                  }}
+                >
+                  Delete Thumbnail
+                </Button>
+              )}
             </Form.Item>
             <Form.Item
               name="title"
@@ -492,65 +538,68 @@ const Splat = ({ url }: any) => {
             onOk={() => setRecordData({})}
             onCancel={() => setRecordData({})}
           >
-            <div style={{marginBottom: '2rem', height: 300}} className="preview relative">
-              {splatData && Object.keys(splatData) ?
-                  <>
-                    <GaussianSplat
-                        src={splatData?.splat?.storage_url}
-                        isAnimate={isAnimate}
-                        thumbnail={""}
-                        className={"!h-[300px] !min-h-[300px] !max-h-[300px] border"}
-                    />
-                    <div className='mt-[-3rem] mb-10'>
-                      <div className="flex justify-between items-center px-4">
-                        <div>
-                          <div className="flex gap-2 items-center">
-                            <div>
-                              <Button
-                                  className={`${isAnimate ? '!bg-green-900 !text-white' : '!bg-white text-green-900'} font-bold `}
-                                  onClick={() => {
-                                    setIsAnimate(true)
-                                    setSplatData(null)
-                                  }
-                                  }
-                              >
-                                Static
-                              </Button>
-                            </div>
-                            <div>
-                              <Button
-                                  className={`${!isAnimate ? '!bg-green-900 !text-white' : '!bg-white text-green-900'} font-bold `}
-                                  onClick={() => {
-                                    setIsAnimate(false)
-                                    setSplatData(null)
-                                  }
-                                  }
-                              >
-                                Animate
-                              </Button>
-                            </div>
+            <div
+              style={{ marginBottom: '2rem', height: 300 }}
+              className="preview relative"
+            >
+              {splatData && Object.keys(splatData) ? (
+                <>
+                  <GaussianSplat
+                    src={splatData?.splat?.storage_url}
+                    isAnimate={isAnimate}
+                    thumbnail={''}
+                    className={
+                      '!h-[300px] !min-h-[300px] !max-h-[300px] border'
+                    }
+                  />
+                  <div className="mt-[-3rem] mb-10">
+                    <div className="flex justify-between items-center px-4">
+                      <div>
+                        <div className="flex gap-2 items-center">
+                          <div>
+                            <Button
+                              className={`${isAnimate ? '!bg-green-900 !text-white' : '!bg-white text-green-900'} font-bold `}
+                              onClick={() => {
+                                setIsAnimate(true);
+                                setSplatData(null);
+                              }}
+                            >
+                              Static
+                            </Button>
+                          </div>
+                          <div>
+                            <Button
+                              className={`${!isAnimate ? '!bg-green-900 !text-white' : '!bg-white text-green-900'} font-bold `}
+                              onClick={() => {
+                                setIsAnimate(false);
+                                setSplatData(null);
+                              }}
+                            >
+                              Animate
+                            </Button>
                           </div>
                         </div>
-                        <div>
-                          <Button
-                              onClick={() =>
-                                  window.open(
-                                      `https://${window.location.hostname}/s/${recordData.slug}`,
-                                      '_blank',
-                                  )
-                              }
-                          >
-                            Full Preview
-                          </Button>
-                        </div>
+                      </div>
+                      <div>
+                        <Button
+                          onClick={() =>
+                            window.open(
+                              `https://${window.location.hostname}/s/${recordData.slug}`,
+                              '_blank',
+                            )
+                          }
+                        >
+                          Full Preview
+                        </Button>
                       </div>
                     </div>
-                  </>
-                  :
-                  <div className='w-full h-full flex items-center justify-center'>
-                    Downloading Splat file...
                   </div>
-              }
+                </>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  Downloading Splat file...
+                </div>
+              )}
             </div>
             <h5 style={{ fontWeight: 600, marginBottom: '.5rem' }}>
               Private Url
