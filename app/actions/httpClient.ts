@@ -154,7 +154,7 @@ const httpClient = (baseUrl: string, token?: string) => {
     title: any;
   }) => {
     return axiosClient
-      .post(`/splat/create`, body, {
+      .post(`/splat/create`, cleanNullFromObject(body), {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -171,7 +171,7 @@ const httpClient = (baseUrl: string, token?: string) => {
     title: any;
   }) => {
     return axiosClient
-      .put(`/splat/update/${body.id}`, body, {
+      .put(`/splat/update/${body.id}`, cleanNullFromObject(body), {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -203,7 +203,7 @@ const httpClient = (baseUrl: string, token?: string) => {
 
   const createCompany = async (body: editProps) => {
     return axiosClient
-      .post(`/cmp/create`, body, {
+      .post(`/cmp/create`, cleanNullFromObject(body), {
         headers: {
           'Content-Type': 'application/json',
         },

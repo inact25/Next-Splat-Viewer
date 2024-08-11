@@ -160,7 +160,10 @@ const Companies = ({ url }: any) => {
   const handleCreate = async (values: any) => {
     try {
       setLoading(true);
-      const uploadResp = await http.fileUploader(values.logo[0].originFileObj);
+      let uploadResp = null;
+      if (values?.logo && values?.logo?.length > 0) {
+        uploadResp = await http.fileUploader(values.logo[0].originFileObj);
+      }
       await http.createCompany({
         logo_id: uploadResp?.responseObject?.id ?? null,
         name: values.name,

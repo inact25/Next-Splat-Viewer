@@ -60,7 +60,7 @@ const Splat = ({ url }: any) => {
     multiple: false,
     beforeUpload: (file) => {
       const fileSizeMB = file.size / 1000000; // Convert bytes to MB
-      if (fileSizeMB > 150) {
+      if (fileSizeMB > 10) {
         message.error('File size exceeds 150MB');
         return Upload.LIST_IGNORE; // Prevent upload and remove the file from the list
       }
@@ -86,17 +86,15 @@ const Splat = ({ url }: any) => {
   const handleCreate = async (values: any) => {
     try {
       setLoading(true);
-      const splatFile = values.file.file
-        ? await http.fileUploader(values.file.file)
-        : { responseObject: { id: '' } };
-      const thumbnailFile = values.thumbnail.file
+      const splatFile = await http.fileUploader(values.file.file);
+      const thumbnailFile = values?.thumbnail?.file
         ? await http.fileUploader(values.thumbnail.file)
-        : { responseObject: { id: '' } };
-      const response = await http.createSplat({
+        : { responseObject: { id: null } };
+      await http.createSplat({
         storage_id: splatFile.responseObject.id,
         title: values.title,
         description: values.description,
-        thumbnail_id: thumbnailFile.responseObject.id,
+        thumbnail_id: thumbnailFile?.responseObject?.id ?? null,
         company_id: Number(companyId),
         is_animated: values.is_animated,
       });
@@ -138,10 +136,11 @@ const Splat = ({ url }: any) => {
       title: 'Thumbnail',
       dataIndex: 'thumbnail_url',
       key: 'thumbnail_url',
-      render: (text: string) => {
+      render: (text: any) => {
+        text = text === '' ? null : text;
         return (
           <img
-            src={text}
+            src={text ?? '/greenview.jpeg'}
             alt={text}
             style={{
               width: 50,
@@ -455,16 +454,29 @@ const Splat = ({ url }: any) => {
             </Form.Item>
             <Form.Item name="thumbnail">
               <Dragger {...props}>
-                <p className="ant-upload-drag-icon">
-                  <CloudUploadOutlined />
-                </p>
-                <p className="ant-upload-text">
-                  Click or drag thumbnail to this area to upload
-                </p>
-                <p className="ant-upload-hint">
-                  Accept only image files and file size must be smaller than
-                  150MB
-                </p>
+                {editingFile?.thumbnail_url ? (
+                  <img
+                    src={editingFile?.thumbnail_url}
+                    style={{
+                      objectFit: 'cover',
+                      width: '100%',
+                      height: 'auto',
+                    }}
+                  />
+                ) : (
+                  <>
+                    <p className="ant-upload-drag-icon">
+                      <CloudUploadOutlined />
+                    </p>
+                    <p className="ant-upload-text">
+                      Click or drag thumbnail to this area to upload
+                    </p>
+                    <p className="ant-upload-hint">
+                      Accept only image files and file size must be smaller than
+                      10MB
+                    </p>
+                  </>
+                )}
               </Dragger>
             </Form.Item>
             <Form.Item>
@@ -473,6 +485,8 @@ const Splat = ({ url }: any) => {
                   onClick={() => {
                     const dataField = { ...editingFile };
                     dataField.thumbnail_id = null;
+                    // @ts-ignore
+                    dataField.thumbnail_url = null;
                     setEditingFile(dataField);
                   }}
                 >
