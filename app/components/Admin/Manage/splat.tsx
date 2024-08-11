@@ -222,7 +222,7 @@ const Splat = ({ url }: any) => {
   };
 
   const getData = async (slug: string) => {
-    const res = await axios.get(`${url}bridge/slug/${slug}`);
+    const res = await axios.get(`${url}/bridge/slug/${slug}`);
     setIsAnimate(res.data.responseObject?.splat?.is_animated);
     setSplatData(res.data.responseObject);
   };
