@@ -5,6 +5,7 @@ import {
   ListCompaniesResponse,
   ListFilesResponse,
 } from '@/app/actions/http';
+import { cleanNullFromObject } from '@/utils';
 
 const objectToUrlParams = (obj: any) => {
   return new URLSearchParams(obj).toString();
@@ -210,8 +211,9 @@ const httpClient = (baseUrl: string, token?: string) => {
       .then((response) => response.data);
   };
   const editCompany = async (body: editProps) => {
+    //delete null
     return axiosClient
-      .put(`/cmp/update/${body.id}`, body, {
+      .put(`/cmp/update/${body.id}`, cleanNullFromObject(body), {
         headers: {
           'Content-Type': 'application/json',
         },
