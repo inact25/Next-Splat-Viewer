@@ -6,10 +6,12 @@ import React, { useEffect, useState } from 'react';
 import {
   Button,
   Card,
+  Col,
   Form,
   Input,
   message,
   Modal,
+  Row,
   Select,
   Space,
   Switch,
@@ -362,34 +364,41 @@ const Splat = ({ url }: any) => {
             initialValues={{ is_animated: true }}
             onFinish={handleCreate}
           >
-            <Form.Item name="file">
-              <Dragger {...props}>
-                <p className="ant-upload-drag-icon">
-                  <CloudUploadOutlined />
-                </p>
-                <p className="ant-upload-text">
-                  Click or drag file to this area to upload
-                </p>
-                <p className="ant-upload-hint">
-                  Accept only .splat file and file size must be smaller than
-                  150MB
-                </p>
-              </Dragger>
-            </Form.Item>
-            <Form.Item name="thumbnail">
-              <Dragger {...propsThumbnail}>
-                <p className="ant-upload-drag-icon">
-                  <CloudUploadOutlined />
-                </p>
-                <p className="ant-upload-text">
-                  Click or drag thumbnail to this area to upload
-                </p>
-                <p className="ant-upload-hint">
-                  Accept only image files and file size must be smaller than
-                  150MB
-                </p>
-              </Dragger>
-            </Form.Item>
+            <Row gutter={[10, 10]}>
+              <Col xs={24} md={12}>
+                <Form.Item name="file">
+                  <Dragger {...props}>
+                    <p className="ant-upload-drag-icon">
+                      <CloudUploadOutlined />
+                    </p>
+                    <p className="ant-upload-text">
+                      Click or drag file to this area to upload
+                    </p>
+                    <p className="ant-upload-hint">
+                      Accept only .splat file and file size must be smaller than
+                      150MB
+                    </p>
+                  </Dragger>
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={12}>
+                <Form.Item name="thumbnail">
+                  <Dragger {...propsThumbnail}>
+                    <p className="ant-upload-drag-icon">
+                      <CloudUploadOutlined />
+                    </p>
+                    <p className="ant-upload-text">
+                      Click or drag thumbnail to this area to upload
+                    </p>
+                    <p className="ant-upload-hint">
+                      Accept only image files and file size must be smaller than
+                      10MB
+                    </p>
+                  </Dragger>
+                </Form.Item>
+              </Col>
+            </Row>
+
             <Form.Item
               name="title"
               rules={[{ required: true, message: 'Please input the title!' }]}
@@ -420,11 +429,14 @@ const Splat = ({ url }: any) => {
                 defaultValue={true}
               />
             </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" loading={loading}>
-                Upload
-              </Button>
-            </Form.Item>
+
+            <Row justify="end">
+              <Col>
+                <Button type="primary" htmlType="submit" loading={loading}>
+                  Upload
+                </Button>
+              </Col>
+            </Row>
           </Form>
         </Modal>
         <Modal
@@ -437,48 +449,56 @@ const Splat = ({ url }: any) => {
             form={editForm}
             initialValues={{ is_animated: true }}
             onFinish={handleEdit}
+            layout="vertical"
           >
-            <Form.Item name="file">
-              <Dragger {...props}>
-                <p className="ant-upload-drag-icon">
-                  <CloudUploadOutlined />
-                </p>
-                <p className="ant-upload-text">
-                  Click or drag file to this area to upload
-                </p>
-                <p className="ant-upload-hint">
-                  Accept only .splat file and file size must be smaller than
-                  150MB
-                </p>
-              </Dragger>
-            </Form.Item>
-            <Form.Item name="thumbnail">
-              <Dragger {...props}>
-                {editingFile?.thumbnail_url ? (
-                  <img
-                    src={editingFile?.thumbnail_url}
-                    style={{
-                      objectFit: 'cover',
-                      width: '100%',
-                      height: 'auto',
-                    }}
-                  />
-                ) : (
-                  <>
+            <Row gutter={[10, 10]}>
+              <Col xs={24} md={12}>
+                <Form.Item name="file">
+                  <Dragger {...props}>
                     <p className="ant-upload-drag-icon">
                       <CloudUploadOutlined />
                     </p>
                     <p className="ant-upload-text">
-                      Click or drag thumbnail to this area to upload
+                      Click or drag file to this area to upload
                     </p>
                     <p className="ant-upload-hint">
-                      Accept only image files and file size must be smaller than
-                      10MB
+                      Accept only .splat file and file size must be smaller than
+                      150MB
                     </p>
-                  </>
-                )}
-              </Dragger>
-            </Form.Item>
+                  </Dragger>
+                </Form.Item>
+              </Col>
+              <Col xs={24} md={12}>
+                <Form.Item name="thumbnail">
+                  <Dragger {...props}>
+                    {editingFile?.thumbnail_url ? (
+                      <img
+                        src={editingFile?.thumbnail_url}
+                        style={{
+                          objectFit: 'cover',
+                          width: '100%',
+                          height: 'auto',
+                        }}
+                      />
+                    ) : (
+                      <>
+                        <p className="ant-upload-drag-icon">
+                          <CloudUploadOutlined />
+                        </p>
+                        <p className="ant-upload-text">
+                          Click or drag thumbnail to this area to upload
+                        </p>
+                        <p className="ant-upload-hint">
+                          Accept only image files and file size must be smaller
+                          than 10MB
+                        </p>
+                      </>
+                    )}
+                  </Dragger>
+                </Form.Item>
+              </Col>
+            </Row>
+
             <Form.Item>
               {editingFile?.thumbnail_id && (
                 <Button
@@ -524,11 +544,13 @@ const Splat = ({ url }: any) => {
                 defaultValue={true}
               />
             </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" loading={loading}>
-                Save
-              </Button>
-            </Form.Item>
+            <Row justify="end">
+              <Col>
+                <Button type="primary" htmlType="submit" loading={loading}>
+                  Save
+                </Button>
+              </Col>
+            </Row>
           </Form>
         </Modal>
         <>
