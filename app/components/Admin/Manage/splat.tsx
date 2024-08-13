@@ -208,25 +208,32 @@ const Splat = ({ url }: any) => {
   }, [recordData.slug, isAnimate]);
 
   const handleEdit = async (values: any) => {
+    let payload: any = {
+      id: editingFile?.id,
+      title: values.title,
+      description: values.description,
+      is_animated: values.is_animated,
+    };
+
+    if (values.file) {
+      const splatFile = await http.fileUploader(values.file.file);
+      payload.storage_id = Number(splatFile.responseObject.id);
+    } else {
+      payload.storage_id = editingFile?.storage_id ? Number(editingFile?.storage_id) : editingFile?.storage_id;
+    }
+
+    if (values.thumbnail) {
+      const thumbnailFile = await http.fileUploader(values.thumbnail.file);
+      payload.thumbnail_id = thumbnailFile.responseObject.id
+        ? Number(thumbnailFile.responseObject.id)
+        : thumbnailFile.responseObject.id
+    } else {
+      payload.thumbnail_id = editingFile?.thumbnail_id ? Number(editingFile?.thumbnail_id) : editingFile?.thumbnail_id;
+    }
+
     try {
       setLoading(true);
-      const splatFile = values.file
-        ? await http.fileUploader(values.file.file)
-        : { responseObject: { id: editingFile?.storage_id } };
-      const thumbnailFile = values.thumbnail
-        ? await http.fileUploader(values.thumbnail.file)
-        : { responseObject: { id: editingFile?.thumbnail_id } };
-      const response = await http.editSplat({
-        id: editingFile?.id,
-        storage_id: Number(splatFile.responseObject.id),
-        title: values.title,
-        description: values.description,
-        thumbnail_id: thumbnailFile.responseObject.id
-          ? Number(thumbnailFile.responseObject.id)
-          : thumbnailFile.responseObject.id,
-        company_id: Number(companyId),
-        is_animated: values.is_animated,
-      });
+      const response = await http.editSplat(payload);
       message.success('File Registered successfully');
       handleRefetch();
       setEditingFile(null);
