@@ -160,7 +160,7 @@ const Splat = ({ url }: any) => {
       },
     },
     {
-      title: 'Script',
+      title: 'Splat Model',
       dataIndex: 'created_at',
       key: 'created_at',
       render: (text: string, record: any) => (
