@@ -213,6 +213,7 @@ const Splat = ({ url }: any) => {
       title: values.title,
       description: values.description,
       is_animated: values.is_animated,
+      company_id: Number(companyId),
     };
 
     if (values.file) {
