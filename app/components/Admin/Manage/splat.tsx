@@ -197,7 +197,7 @@ const Splat = ({ url }: any) => {
 
   const getData = async (slug: string) => {
     const res = await axios.get(`${url}/bridge/slug/${slug}`);
-    setIsAnimate(res.data.responseObject?.splat?.is_animated);
+    // setIsAnimate(res.data.responseObject?.splat?.is_animated);
     setSplatData(res.data.responseObject);
   };
 
@@ -350,10 +350,10 @@ const Splat = ({ url }: any) => {
                 <p className="ant-upload-drag-icon">
                   <CloudUploadOutlined />
                 </p>
-                <p className="ant-upload-text">
+                <p className="ant-upload-text !text-[10px]">
                   Click or drag file to this area to upload
                 </p>
-                <p className="ant-upload-hint">
+                <p className="ant-upload-hint !text-[10px]">
                   Accept only .splat file and file size must be smaller than
                   150MB
                 </p>
@@ -441,7 +441,7 @@ const Splat = ({ url }: any) => {
                 <p className="ant-upload-drag-icon">
                   <CloudUploadOutlined />
                 </p>
-                <p className="ant-upload-text">
+                <p className="ant-upload-text ">
                   Click or drag file to this area to upload
                 </p>
                 <p className="ant-upload-hint">
@@ -470,10 +470,10 @@ const Splat = ({ url }: any) => {
                         <p className="ant-upload-drag-icon">
                           <CloudUploadOutlined />
                         </p>
-                        <p className="ant-upload-text">
+                        <p className="ant-upload-text !text-[10px]">
                           Click or drag thumbnail to this area to upload
                         </p>
-                        <p className="ant-upload-hint">
+                        <p className="ant-upload-hint !text-[10px]">
                           Accept only image files and file size must be smaller
                           than 10MB
                         </p>
@@ -616,7 +616,7 @@ const Splat = ({ url }: any) => {
             <h5 style={{ fontWeight: 600, marginBottom: '.5rem' }}>
               Private Url
             </h5>
-            <div
+            <div className='w-full'
               style={{
                 marginBottom: '2rem',
                 display: 'flex',
@@ -624,7 +624,7 @@ const Splat = ({ url }: any) => {
                 justifyContent: 'space-between',
               }}
             >
-              <div>
+              <div className='w-full'>
                 <Input
                   width={'100%'}
                   disabled
