@@ -341,8 +341,8 @@ const Companies = ({ url }: any) => {
               {editingFile?.logo_url ? (
                 <img
                   style={{
-                    objectFit: 'cover',
-                    height: 'auto',
+                    objectFit: 'contain',
+                    height: '150px',
                     width: '100%',
                   }}
                   src={editingFile?.logo_url}
