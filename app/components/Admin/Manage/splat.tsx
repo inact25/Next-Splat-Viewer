@@ -19,11 +19,7 @@ import {
   Upload,
   UploadProps,
 } from 'antd';
-import {
-  CloudUploadOutlined,
-  DeleteFilled,
-  EditFilled,
-} from '@ant-design/icons';
+import { CloudUploadOutlined, DeleteFilled, EditFilled } from '@ant-design/icons';
 import axios from 'axios';
 import GaussianSplat from '@/app/components/GaussianSplat';
 
@@ -111,6 +107,7 @@ const Splat = ({ url }: any) => {
     }
   };
 
+
   const http = httpClient(url);
   const [listSplat, setListSplat] = useState<ListFilesResponse[]>([]);
   const [listCompany, setListCompany] = useState<any[]>([]);
@@ -176,31 +173,6 @@ const Splat = ({ url }: any) => {
         </Button>
       ),
     },
-    // {
-    //   title: 'Embed Url',
-    //   dataIndex: 'created_at',
-    //   key: 'created_at',
-    //   render: (text: string, record:any) => <Button onClick={() => {
-    //     navigator.clipboard.writeText(`https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${record.id}.splat`).then(() => {
-    //       message.success('Copied to Clipboard');
-    //     }).catch(err => {
-    //       message.error('Could not copy text: ', err);
-    //     });
-    //   }}>Copy Embeded Url</Button>
-    // },
-    // {
-    //   title: 'Embed Script',
-    //   dataIndex: 'created_at',
-    //   key: 'created_at',
-    //   render: (text: string, record:any) => <Button onClick={() => {
-    //     const textToCopy = `<iframe src="https://${window.location.hostname}/world/${companyData?.company_name}/${companyToken}/${record.id}.splat" title="${record.title}" style="width:100%; height:100dvh; border:none;"></iframe>`;
-    //     navigator.clipboard.writeText(textToCopy).then(() => {
-    //       message.success('Copied to Clipboard');
-    //     }).catch(err => {
-    //       message.error('Could not copy text: ', err);
-    //     });
-    //   }}>Copy Embeded Script</Button>
-    // },
     {
       title: 'Actions',
       key: 'actions',
@@ -363,72 +335,77 @@ const Splat = ({ url }: any) => {
             form={form}
             initialValues={{ is_animated: true }}
             onFinish={handleCreate}
+            layout="vertical"
           >
-            <Row gutter={[10, 10]}>
-              <Col xs={24} md={12}>
-                <Form.Item name="file">
-                  <Dragger {...props}>
-                    <p className="ant-upload-drag-icon">
-                      <CloudUploadOutlined />
-                    </p>
-                    <p className="ant-upload-text">
-                      Click or drag file to this area to upload
-                    </p>
-                    <p className="ant-upload-hint">
-                      Accept only .splat file and file size must be smaller than
-                      150MB
-                    </p>
-                  </Dragger>
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12}>
+            <Form.Item style={{ fontWeight: 500 }} name="file" label="Upload Gausian Splat File">
+              <Dragger {...props}>
+                <p className="ant-upload-drag-icon">
+                  <CloudUploadOutlined />
+                </p>
+                <p className="ant-upload-text">
+                  Click or drag file to this area to upload
+                </p>
+                <p className="ant-upload-hint">
+                  Accept only .splat file and file size must be smaller than
+                  150MB
+                </p>
+              </Dragger>
+            </Form.Item>
+            <hr style={{ marginBottom: '1rem' }} />
+            <div className="font-medium mb-4">Upload Thumbnail and Fill the Data</div>
+
+            <Row gutter={[16, 16]}>
+              <Col lg={8}>
                 <Form.Item name="thumbnail">
                   <Dragger {...propsThumbnail}>
                     <p className="ant-upload-drag-icon">
                       <CloudUploadOutlined />
                     </p>
-                    <p className="ant-upload-text">
+                    <p className="ant-upload-text !text-[10px]">
                       Click or drag thumbnail to this area to upload
                     </p>
-                    <p className="ant-upload-hint">
+                    <p className="ant-upload-hint !text-[10px]">
                       Accept only image files and file size must be smaller than
                       10MB
                     </p>
                   </Dragger>
                 </Form.Item>
               </Col>
-            </Row>
+              <Col lg={16}>
+                <Form.Item
+                  name="title"
+                  rules={[{ required: true, message: 'Please input the title!' }]}
+                >
+                  <Input placeholder="Title" />
+                </Form.Item>
+                <Form.Item
+                  name="description"
+                  rules={[
+                    { required: true, message: 'Please input the description!' },
+                  ]}
+                >
+                  <Input.TextArea placeholder="Description" />
+                </Form.Item>
+                <Form.Item
 
-            <Form.Item
-              name="title"
-              rules={[{ required: true, message: 'Please input the title!' }]}
-            >
-              <Input placeholder="Title" />
-            </Form.Item>
-            <Form.Item
-              name="description"
-              rules={[
-                { required: true, message: 'Please input the description!' },
-              ]}
-            >
-              <Input.TextArea placeholder="Description" />
-            </Form.Item>
-            <Form.Item
-              valuePropName={'checked'}
-              style={{ fontWeight: 'bold', fontSize: 18 }}
-              label={'Enable Animation'}
-              name={'is_animated'}
-              rules={[
-                { required: true, message: 'Please set Animation Status!' },
-              ]}
-            >
-              <Switch
-                checkedChildren="Enable"
-                unCheckedChildren="Disable"
-                defaultChecked
-                defaultValue={true}
-              />
-            </Form.Item>
+                  valuePropName={'checked'}
+                  style={{ fontWeight: 'bold', fontSize: 18, marginTop: -12 }}
+                  label={'Enable Animation'}
+                  name={'is_animated'}
+                  rules={[
+                    { required: true, message: 'Please set Animation Status!' },
+                  ]}
+                >
+                  <Switch
+                    style={{ marginTop: -10 }}
+                    checkedChildren="Enable"
+                    unCheckedChildren="Disable"
+                    defaultChecked
+                    defaultValue={true}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
 
             <Row justify="end">
               <Col>
@@ -451,33 +428,33 @@ const Splat = ({ url }: any) => {
             onFinish={handleEdit}
             layout="vertical"
           >
-            <Row gutter={[10, 10]}>
-              <Col xs={24} md={12}>
-                <Form.Item name="file">
-                  <Dragger {...props}>
-                    <p className="ant-upload-drag-icon">
-                      <CloudUploadOutlined />
-                    </p>
-                    <p className="ant-upload-text">
-                      Click or drag file to this area to upload
-                    </p>
-                    <p className="ant-upload-hint">
-                      Accept only .splat file and file size must be smaller than
-                      150MB
-                    </p>
-                  </Dragger>
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={12}>
+            <Form.Item style={{ fontWeight: 500 }} name="file" label="Upload Gausian Splat File">
+              <Dragger {...props}>
+                <p className="ant-upload-drag-icon">
+                  <CloudUploadOutlined />
+                </p>
+                <p className="ant-upload-text">
+                  Click or drag file to this area to upload
+                </p>
+                <p className="ant-upload-hint">
+                  Accept only .splat file and file size must be smaller than
+                  150MB
+                </p>
+              </Dragger>
+            </Form.Item>
+            <hr style={{ marginBottom: '1rem' }} />
+            <div className="font-medium mb-4">Upload Thumbnail and Fill the Data</div>
+            <Row gutter={[16, 16]}>
+              <Col lg={8}>
                 <Form.Item name="thumbnail">
-                  <Dragger {...props}>
+                  <Dragger {...propsThumbnail}>
                     {editingFile?.thumbnail_url ? (
                       <img
                         src={editingFile?.thumbnail_url}
                         style={{
-                          objectFit: 'cover',
+                          objectFit: 'contain',
                           width: '100%',
-                          height: 'auto',
+                          maxHeight: 150,
                         }}
                       />
                     ) : (
@@ -496,54 +473,59 @@ const Splat = ({ url }: any) => {
                     )}
                   </Dragger>
                 </Form.Item>
+                <Form.Item>
+                  {editingFile?.thumbnail_id && (
+                    <Button
+                      type={'primary'}
+                      danger
+                      style={{ bottom: 58, left: 3, position: 'absolute' }}
+                      onClick={() => {
+                        const dataField = { ...editingFile };
+                        dataField.thumbnail_id = null;
+                        // @ts-ignore
+                        dataField.thumbnail_url = null;
+                        setEditingFile(dataField);
+                      }}
+                    >
+                      Delete Thumbnail
+                    </Button>
+                  )}
+                </Form.Item>
+              </Col>
+              <Col lg={16}>
+                <Form.Item
+                  name="title"
+                  rules={[{ required: true, message: 'Please input the title!' }]}
+                >
+                  <Input placeholder="Title" />
+                </Form.Item>
+                <Form.Item
+                  name="description"
+                  rules={[
+                    { required: true, message: 'Please input the description!' },
+                  ]}
+                >
+                  <Input.TextArea placeholder="Description" />
+                </Form.Item>
+                <Form.Item
+                  valuePropName={'checked'}
+                  style={{ fontWeight: 'bold', fontSize: 18, marginTop: -16 }}
+                  label={'Enable Animation'}
+                  name={'is_animated'}
+                  rules={[
+                    { required: true, message: 'Please set Animation Status!' },
+                  ]}
+                >
+                  <Switch
+                    style={{ marginTop: -10 }}
+                    checkedChildren="Enable"
+                    unCheckedChildren="Disable"
+                    defaultChecked
+                    defaultValue={true}
+                  />
+                </Form.Item>
               </Col>
             </Row>
-
-            <Form.Item>
-              {editingFile?.thumbnail_id && (
-                <Button
-                  onClick={() => {
-                    const dataField = { ...editingFile };
-                    dataField.thumbnail_id = null;
-                    // @ts-ignore
-                    dataField.thumbnail_url = null;
-                    setEditingFile(dataField);
-                  }}
-                >
-                  Delete Thumbnail
-                </Button>
-              )}
-            </Form.Item>
-            <Form.Item
-              name="title"
-              rules={[{ required: true, message: 'Please input the title!' }]}
-            >
-              <Input placeholder="Title" />
-            </Form.Item>
-            <Form.Item
-              name="description"
-              rules={[
-                { required: true, message: 'Please input the description!' },
-              ]}
-            >
-              <Input.TextArea placeholder="Description" />
-            </Form.Item>
-            <Form.Item
-              valuePropName={'checked'}
-              style={{ fontWeight: 'bold', fontSize: 18 }}
-              label={'Enable Animation'}
-              name={'is_animated'}
-              rules={[
-                { required: true, message: 'Please set Animation Status!' },
-              ]}
-            >
-              <Switch
-                checkedChildren="Enable"
-                unCheckedChildren="Disable"
-                defaultChecked
-                defaultValue={true}
-              />
-            </Form.Item>
             <Row justify="end">
               <Col>
                 <Button type="primary" htmlType="submit" loading={loading}>
@@ -634,8 +616,9 @@ const Splat = ({ url }: any) => {
                 justifyContent: 'space-between',
               }}
             >
-              <div style={{ width: '80%' }}>
+              <div>
                 <Input
+                  width={'100%'}
                   disabled
                   value={`https://${window.location.hostname}/${companyData?.company_name}/${companyToken}/${recordData.id}`}
                 />
@@ -670,7 +653,7 @@ const Splat = ({ url }: any) => {
                 justifyContent: 'space-between',
               }}
             >
-              <div style={{ width: '80%' }}>
+              <div>
                 <Input
                   disabled
                   value={`https://${window.location.hostname}/s/${recordData.slug}`}
