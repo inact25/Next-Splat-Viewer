@@ -198,8 +198,7 @@ const Splat = ({ url }: any) => {
         is_animated: isAnimate
       });
       message.success('Animated Switch successfully');
-      console.log(res,"rees")
-      setSplatData(res.responseObject);
+      getData(recordData.slug);
     } catch (error) {
       message.error('Animated Switch failed');
     } finally {
@@ -561,7 +560,7 @@ const Splat = ({ url }: any) => {
               style={{ marginBottom: '2rem', height: 300 }}
               className="preview relative"
             >
-              {splatData && Object.keys(splatData) ? (
+              {splatData && Object.keys(splatData && !loading) ? (
                 <>
                   <GaussianSplat
                     src={splatData?.splat?.storage_url}
