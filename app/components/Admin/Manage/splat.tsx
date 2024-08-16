@@ -1,25 +1,10 @@
 'use client';
 
 import httpClient from '@/app/actions/httpClient';
-import { ListFilesResponse } from '@/app/actions/http';
-import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  Input,
-  message,
-  Modal,
-  Row,
-  Select,
-  Space,
-  Switch,
-  Table,
-  Upload,
-  UploadProps,
-} from 'antd';
-import { CloudUploadOutlined, DeleteFilled, EditFilled } from '@ant-design/icons';
+import {ListFilesResponse} from '@/app/actions/http';
+import React, {useEffect, useState} from 'react';
+import {Button, Card, Col, Form, Input, message, Modal, Row, Select, Space, Table, Upload, UploadProps,} from 'antd';
+import {CloudUploadOutlined, DeleteFilled, EditFilled} from '@ant-design/icons';
 import axios from 'axios';
 import GaussianSplat from '@/app/components/GaussianSplat';
 
@@ -34,7 +19,6 @@ const Splat = ({ url }: any) => {
   const [editingFile, setEditingFile] = useState<ListFilesResponse | null>(
     null,
   );
-  const [isAnimate, setIsAnimate] = useState(true);
   const [params, setParams] = useState({ limit: 10, page: 1, company_id: 0 });
 
   const props: UploadProps = {
@@ -197,7 +181,6 @@ const Splat = ({ url }: any) => {
 
   const getData = async (slug: string) => {
     const res = await axios.get(`${url}/bridge/slug/${slug}`);
-    // setIsAnimate(res.data.responseObject?.splat?.is_animated);
     setSplatData(res.data.responseObject);
   };
 
@@ -205,9 +188,25 @@ const Splat = ({ url }: any) => {
     if (recordData.slug) {
       getData(recordData.slug);
     }
-  }, [recordData.slug, isAnimate]);
+  }, [recordData.slug]);
 
-  const handleEdit = async (values: any) => {
+  const handleSwitch = async (isAnimate: boolean) => {
+    try {
+      setLoading(true);
+      const res = await http.switchAnimate({
+        id: recordData.id,
+        is_animated: isAnimate
+      });
+      message.success('Animated Switch successfully');
+      console.log(res,"rees")
+      setSplatData(res.responseObject);
+    } catch (error) {
+      message.error('Animated Switch failed');
+    } finally {
+      setLoading(false);
+    }
+  }
+  const handleEdit = async (values: any, purpose?: string) => {
     let payload: any = {
       id: editingFile?.id,
       title: values.title,
@@ -281,6 +280,8 @@ const Splat = ({ url }: any) => {
     }
   }, [editingFile]);
 
+  console.log("rec", recordData)
+
   return (
     <>
       <Select
@@ -341,7 +342,7 @@ const Splat = ({ url }: any) => {
         >
           <Form
             form={form}
-            initialValues={{ is_animated: true }}
+            initialValues={{is_animated: false}}
             onFinish={handleCreate}
             layout="vertical"
           >
@@ -394,24 +395,24 @@ const Splat = ({ url }: any) => {
                 >
                   <Input.TextArea placeholder="Description" />
                 </Form.Item>
-                <Form.Item
+                {/*<Form.Item*/}
 
-                  valuePropName={'checked'}
-                  style={{ fontWeight: 'bold', fontSize: 18, marginTop: -12 }}
-                  label={'Enable Animation'}
-                  name={'is_animated'}
-                  rules={[
-                    { required: true, message: 'Please set Animation Status!' },
-                  ]}
-                >
-                  <Switch
-                    style={{ marginTop: -10 }}
-                    checkedChildren="Enable"
-                    unCheckedChildren="Disable"
-                    defaultChecked
-                    defaultValue={true}
-                  />
-                </Form.Item>
+                {/*  valuePropName={'checked'}*/}
+                {/*  style={{ fontWeight: 'bold', fontSize: 18, marginTop: -12 }}*/}
+                {/*  label={'Enable Animation'}*/}
+                {/*  name={'is_animated'}*/}
+                {/*  rules={[*/}
+                {/*    { required: true, message: 'Please set Animation Status!' },*/}
+                {/*  ]}*/}
+                {/*>*/}
+                {/*  <Switch*/}
+                {/*    style={{ marginTop: -10 }}*/}
+                {/*    checkedChildren="Enable"*/}
+                {/*    unCheckedChildren="Disable"*/}
+                {/*    defaultChecked*/}
+                {/*    defaultValue={true}*/}
+                {/*  />*/}
+                {/*</Form.Item>*/}
               </Col>
             </Row>
 
@@ -432,7 +433,7 @@ const Splat = ({ url }: any) => {
         >
           <Form
             form={editForm}
-            initialValues={{ is_animated: true }}
+            initialValues={{is_animated: false}}
             onFinish={handleEdit}
             layout="vertical"
           >
@@ -515,23 +516,23 @@ const Splat = ({ url }: any) => {
                 >
                   <Input.TextArea placeholder="Description" />
                 </Form.Item>
-                <Form.Item
-                  valuePropName={'checked'}
-                  style={{ fontWeight: 'bold', fontSize: 18, marginTop: -16 }}
-                  label={'Enable Animation'}
-                  name={'is_animated'}
-                  rules={[
-                    { required: true, message: 'Please set Animation Status!' },
-                  ]}
-                >
-                  <Switch
-                    style={{ marginTop: -10 }}
-                    checkedChildren="Enable"
-                    unCheckedChildren="Disable"
-                    defaultChecked
-                    defaultValue={true}
-                  />
-                </Form.Item>
+                {/*<Form.Item*/}
+                {/*  valuePropName={'checked'}*/}
+                {/*  style={{ fontWeight: 'bold', fontSize: 18, marginTop: -16 }}*/}
+                {/*  label={'Enable Animation'}*/}
+                {/*  name={'is_animated'}*/}
+                {/*  rules={[*/}
+                {/*    { required: true, message: 'Please set Animation Status!' },*/}
+                {/*  ]}*/}
+                {/*>*/}
+                {/*  <Switch*/}
+                {/*    style={{ marginTop: -10 }}*/}
+                {/*    checkedChildren="Enable"*/}
+                {/*    unCheckedChildren="Disable"*/}
+                {/*    defaultChecked*/}
+                {/*    defaultValue={true}*/}
+                {/*  />*/}
+                {/*</Form.Item>*/}
               </Col>
             </Row>
             <Row justify="end">
@@ -547,8 +548,14 @@ const Splat = ({ url }: any) => {
           <Modal
             title="Generate World Script"
             open={!!Object.keys(recordData)?.length}
-            onOk={() => setRecordData({})}
-            onCancel={() => setRecordData({})}
+            onOk={() => {
+              setRecordData({})
+              setSplatData(null)
+            }}
+            onCancel={() => {
+              setRecordData({})
+              setSplatData(null)
+            }}
           >
             <div
               style={{ marginBottom: '2rem', height: 300 }}
@@ -558,7 +565,7 @@ const Splat = ({ url }: any) => {
                 <>
                   <GaussianSplat
                     src={splatData?.splat?.storage_url}
-                    isAnimate={isAnimate}
+                    isAnimate={splatData?.splat?.is_animated}
                     thumbnail={''}
                     className={
                       '!h-[300px] !min-h-[300px] !max-h-[300px] border'
@@ -570,9 +577,9 @@ const Splat = ({ url }: any) => {
                         <div className="flex gap-2 items-center">
                           <div>
                             <Button
-                              className={`${isAnimate ? '!bg-green-900 !text-white' : '!bg-white text-green-900'} font-bold `}
+                              className={`${!splatData?.splat?.is_animated ? '!bg-green-900 !text-white' : '!bg-white text-green-900'} font-bold `}
                               onClick={() => {
-                                setIsAnimate(true);
+                                handleSwitch(false)
                                 setSplatData(null);
                               }}
                             >
@@ -581,9 +588,9 @@ const Splat = ({ url }: any) => {
                           </div>
                           <div>
                             <Button
-                              className={`${!isAnimate ? '!bg-green-900 !text-white' : '!bg-white text-green-900'} font-bold `}
+                              className={`${splatData?.splat?.is_animated ? '!bg-green-900 !text-white' : '!bg-white text-green-900'} font-bold `}
                               onClick={() => {
-                                setIsAnimate(false);
+                                handleSwitch(true)
                                 setSplatData(null);
                               }}
                             >

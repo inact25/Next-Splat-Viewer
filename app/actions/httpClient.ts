@@ -1,11 +1,7 @@
 'use client';
 import axios from 'axios';
-import {
-  CommonResponse,
-  ListCompaniesResponse,
-  ListFilesResponse,
-} from '@/app/actions/http';
-import { cleanNullFromObject } from '@/utils';
+import {CommonResponse, ListCompaniesResponse, ListFilesResponse,} from '@/app/actions/http';
+import {cleanNullFromObject} from '@/utils';
 
 const objectToUrlParams = (obj: any) => {
   return new URLSearchParams(obj).toString();
@@ -163,12 +159,12 @@ const httpClient = (baseUrl: string, token?: string) => {
   };
   const editSplat = async (body: {
     id?: number;
-    thumbnail_id: any;
-    is_animated: any;
-    company_id: number;
-    storage_id: any;
-    description: any;
-    title: any;
+    thumbnail_id?: any;
+    is_animated?: any;
+    company_id?: number;
+    storage_id?: any;
+    description?: any;
+    title?: any;
   }) => {
     return axiosClient
       .put(`/splat/update/${body.id}`, cleanNullFromObject(body), {
@@ -211,7 +207,6 @@ const httpClient = (baseUrl: string, token?: string) => {
       .then((response) => response.data);
   };
   const editCompany = async (body: editProps) => {
-    //delete null
     return axiosClient
       .put(`/cmp/update/${body.id}`, cleanNullFromObject(body), {
         headers: {
@@ -225,6 +220,15 @@ const httpClient = (baseUrl: string, token?: string) => {
       .delete(`/cmp/delete/${id}`)
       .then((response) => response.data);
   };
+
+  const switchAnimate = async ({id, is_animated}: {
+    id: string,
+    is_animated: boolean
+  }): Promise<CommonResponse<string>> => {
+    return axiosClient.patch(`/splat/animated/${id}`, {
+      is_animated: is_animated
+    }).then((response) => response.data);
+  }
 
   const listCompanies = async ({
     limit,
@@ -256,6 +260,7 @@ const httpClient = (baseUrl: string, token?: string) => {
     createCompany,
     generateToken,
     previewSplat,
+    switchAnimate
   };
 };
 

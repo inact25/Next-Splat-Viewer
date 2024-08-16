@@ -37,7 +37,7 @@ export default function GaussianSplat({
       sphericalHarmonicsDegree: 2,
       rootElement: rootElement,
       sharedMemoryForWorkers: false,
-      sceneRevealMode: isAnimate
+      sceneRevealMode: !isAnimate
         ? GaussianSplats3D.SceneRevealMode.Instant
         : GaussianSplats3D.SceneRevealMode.Gradual,
     });
