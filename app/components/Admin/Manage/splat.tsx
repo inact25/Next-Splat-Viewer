@@ -393,7 +393,7 @@ const Splat = ({ url }: any) => {
                     { required: true, message: 'Please input the description!' },
                   ]}
                 >
-                  <Input.TextArea placeholder="Description" />
+                  <Input.TextArea rows={5} placeholder="Description" />
                 </Form.Item>
                 {/*<Form.Item*/}
 
@@ -514,7 +514,7 @@ const Splat = ({ url }: any) => {
                     { required: true, message: 'Please input the description!' },
                   ]}
                 >
-                  <Input.TextArea placeholder="Description" />
+                  <Input.TextArea rows={5} placeholder="Description" />
                 </Form.Item>
                 {/*<Form.Item*/}
                 {/*  valuePropName={'checked'}*/}
