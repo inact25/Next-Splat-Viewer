@@ -198,7 +198,8 @@ const Splat = ({ url }: any) => {
         is_animated: isAnimate
       });
       message.success('Animated Switch successfully');
-      getData(recordData.slug);
+      setSplatData(res.responseObject)
+      // getData(recordData.slug);
     } catch (error) {
       message.error('Animated Switch failed');
     } finally {
@@ -667,7 +668,7 @@ const Splat = ({ url }: any) => {
                 justifyContent: 'space-between',
               }}
             >
-              <div>
+              <div className='w-full'>
                 <Input
                   disabled
                   value={`https://${window.location.hostname}/s/${recordData.slug}`}
