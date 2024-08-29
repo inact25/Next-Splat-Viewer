@@ -53,8 +53,11 @@ export default function GaussianSplat({
       })
       .then(() => {
         viewer.start();
-        // viewer.perspectiveControls.stopListenToKeyEvents();
-        // viewer.orthographicControls.stopListenToKeyEvents();
+        // Only stop listening to key events if mode is not AR
+        if (mode !== 'AR') {
+          viewer.perspectiveControls.stopListenToKeyEvents();
+          viewer.orthographicControls.stopListenToKeyEvents();
+        }
         setTimeout(() => {
           setIsLoading(false);
         }, 2000);
