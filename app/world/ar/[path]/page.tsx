@@ -1,28 +1,47 @@
 import React from 'react';
-import { getFile } from '@/app/actions/http';
 import dynamic from 'next/dynamic';
 import type { Metadata } from 'next';
+import { API_URL } from '@/app/constant/config';
 
 export const metadata: Metadata = {
   title: 'Greenview - Viewer ',
   description: 'Greenview - Viewer',
 };
 
-const GaussianSplatAR = dynamic(
-  () => import('@/app/components/GaussianSplatAR'),
-  {
-    ssr: false,
-    // loading: false,
-  },
-);
+const GaussianSplat = dynamic(() => import('@/app/components/GaussianSplat'), {
+  ssr: false,
+  // loading: false,
+});
+
+const getData = async (slug: string) => {
+  const res = await fetch(`${API_URL}/bridge/slug/${slug}`, {
+    cache: 'no-cache',
+  });
+  if (!res.ok) {
+    console.log(res, API_URL, slug);
+    throw new Error('Failed to fetch data');
+  }
+  return res.json();
+};
 const Page = async (props: any) => {
   const { params } = props;
-  const id = params.path as string;
+  const slug = params.path as string;
   try {
-    const loadFile = await getFile(id);
+    const data = await getData(slug);
+    if (!data?.responseObject?.splat?.storage_url) {
+      return <div>Failed to load file</div>;
+    }
+
+    const { storage_url, is_animated } = data.responseObject.splat;
+    const { logo_url } = data.responseObject.company;
     return (
       <>
-        <GaussianSplatAR src={loadFile.responseObject} />
+        <GaussianSplat
+          src={storage_url}
+          isAnimate={is_animated}
+          thumbnail={logo_url}
+          mode={'AR'}
+        />
       </>
     );
   } catch (error) {

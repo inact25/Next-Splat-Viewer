@@ -9,7 +9,7 @@ export default function GaussianSplat({
   isAnimate,
   thumbnail,
   className,
-  mode='None'
+  mode = 'None',
 }: {
   src: string;
   camera?: Camera;
@@ -38,7 +38,10 @@ export default function GaussianSplat({
       initialCameraLookAt: [0, 0, 0],
       sphericalHarmonicsDegree: 2,
       rootElement: rootElement,
-      webXRMode: mode === 'AR' ? GaussianSplats3D.WebXRMode.AR : GaussianSplats3D.WebXRMode.None,
+      webXRMode:
+        mode === 'AR'
+          ? GaussianSplats3D.WebXRMode.AR
+          : GaussianSplats3D.WebXRMode.None,
       sharedMemoryForWorkers: false,
       sceneRevealMode: !isAnimate
         ? GaussianSplats3D.SceneRevealMode.Instant
@@ -54,8 +57,10 @@ export default function GaussianSplat({
       .then(() => {
         viewer.start();
         // Only stop listening to key events if mode is not AR
+        if (mode !== 'AR') {
           viewer.perspectiveControls.stopListenToKeyEvents();
           viewer.orthographicControls.stopListenToKeyEvents();
+        }
         setTimeout(() => {
           setIsLoading(false);
         }, 2000);
