@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import * as GaussianSplats3D from '@mkkellogg/gaussian-splats-3d';
 import { Camera, Quaternion, Vector3 } from 'three';
 import useAccelerometer from '@/hooks/useAccelerometer';
-import Permissions from '@/app/components/Permissions';
 
 function GaussianSplatAR({ src }: { src: string; camera?: Camera }) {
   const [rootElementId] = useState(
@@ -55,11 +54,7 @@ const GaussianSplatARContainer = ({
   src: string;
   camera?: Camera;
 }) => {
-  return (
-    <Permissions>
-      <GaussianSplatAR src={src} />
-    </Permissions>
-  );
+  return <GaussianSplatAR src={src} />;
 };
 
 export default GaussianSplatARContainer;
