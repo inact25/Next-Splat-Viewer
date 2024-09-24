@@ -1,13 +1,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
-import type { Metadata } from 'next';
 import { API_URL } from '@/app/constant/config';
 import Head from 'next/head';
-
-export const metadata: Metadata = {
-  title: 'Greenview - Viewer ',
-  description: 'Greenview - Viewer',
-};
 
 const GaussianSplat = dynamic(() => import('@/app/components/GaussianSplat'), {
   ssr: false,
@@ -32,6 +26,7 @@ const Page = async (props: any) => {
     data.responseObject.splat;
   const { logo_url } = data.responseObject.company;
   const logo = logo_url !== '' ? logo_url : '/greenview.jpeg';
+  console.log(storage_url, is_animated, title, description);
   return (
     <>
       <Head>
@@ -44,10 +39,6 @@ const Page = async (props: any) => {
           content={description || '3D models viewer'}
         />
         <meta property="og:image" content={logo} />
-        <meta
-          property="og:url"
-          content={`https://${window.location.hostname}/s/${params.slug}`}
-        />
         <meta property="og:type" content="website" />
       </Head>
       {Object.keys(data) && (
