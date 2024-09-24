@@ -112,6 +112,7 @@ const Splat = ({ url }: any) => {
 
   const http = httpClient(url);
   const [listSplat, setListSplat] = useState<ListFilesResponse[]>([]);
+  const [totalSplat, setTotalSplat] = useState<number>(0);
   const [listCompany, setListCompany] = useState<any[]>([]);
   const [refetch, setRefetch] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -284,6 +285,7 @@ const Splat = ({ url }: any) => {
     try {
       const response = await http.listSplat({ ...params, ...body });
       setListSplat(response.responseObject);
+      setTotalSplat(response?.total ?? 0);
     } catch (error) {
     } finally {
       setLoading(false);
@@ -366,7 +368,7 @@ const Splat = ({ url }: any) => {
           onChange={handleTableChange}
           pagination={{
             pageSize: params.limit,
-            total: listSplat.length,
+            total: totalSplat,
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total, range) =>

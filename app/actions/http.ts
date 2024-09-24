@@ -5,6 +5,7 @@ export type CommonResponse<T> = {
   message: string;
   responseObject: T;
   statusCode: number;
+  total?: number;
 };
 
 export type ListFilesResponse = {
