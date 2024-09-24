@@ -22,7 +22,7 @@ const getData = async (slug: string) => {
 const Page = async (props: any) => {
   const { params } = props;
   const data = await getData(params.slug);
-  const { storage_url, is_animated, title, description } =
+  const { storage_url, is_animated, title, description, disable_drag } =
     data.responseObject.splat;
   const { logo_url } = data.responseObject.company;
   const logo = logo_url !== '' ? logo_url : '/greenview.jpeg';
@@ -46,6 +46,7 @@ const Page = async (props: any) => {
           isAnimate={is_animated}
           thumbnail={logo_url}
           mode={'None'}
+          disable_drag={disable_drag}
         />
       )}
     </>

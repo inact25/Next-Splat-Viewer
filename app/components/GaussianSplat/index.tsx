@@ -10,6 +10,7 @@ export default function GaussianSplat({
   thumbnail,
   className,
   mode = 'None',
+  disable_drag = false,
 }: {
   src: string;
   camera?: Camera;
@@ -17,6 +18,7 @@ export default function GaussianSplat({
   thumbnail?: string;
   className?: string;
   mode?: 'AR' | 'None';
+  disable_drag?: boolean;
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const [rootElementId] = useState(
@@ -31,7 +33,6 @@ export default function GaussianSplat({
     while (rootElement.firstChild) {
       rootElement.removeChild(rootElement.firstChild);
     }
-
     const viewer = new GaussianSplats3D.Viewer({
       cameraUp: [0, -1, 0],
       initialCameraPosition: [-8, -2, -4],
@@ -46,6 +47,13 @@ export default function GaussianSplat({
       sceneRevealMode: !isAnimate
         ? GaussianSplats3D.SceneRevealMode.Instant
         : GaussianSplats3D.SceneRevealMode.Gradual,
+      useBuiltInControls: true,
+      orthographicControls: {
+        enablePan: !disable_drag,
+      },
+      perspectiveControls: {
+        enablePan: !disable_drag,
+      },
     });
 
     viewer
@@ -55,11 +63,27 @@ export default function GaussianSplat({
         showLoadingUI: false,
       })
       .then(() => {
-        viewer.start();
         // Only stop listening to key events if mode is not AR
         if (mode !== 'AR') {
-          viewer.perspectiveControls.stopListenToKeyEvents();
-          viewer.orthographicControls.stopListenToKeyEvents();
+          let perspective = false;
+          let orthographic = false;
+          if (viewer.perspectiveControls) {
+            viewer.perspectiveControls.stopListenToKeyEvents();
+            viewer.perspectiveControls.enablePan = false;
+            perspective = true;
+          }
+          if (viewer.orthographicControls) {
+            viewer.orthographicControls.stopListenToKeyEvents();
+            viewer.orthographicControls.enablePan = false;
+            orthographic = true;
+          }
+          if (perspective && orthographic) {
+            viewer.start();
+            setTimeout(() => {
+              setIsLoading(false);
+            }, 2000);
+          }
+          return;
         }
         setTimeout(() => {
           setIsLoading(false);
