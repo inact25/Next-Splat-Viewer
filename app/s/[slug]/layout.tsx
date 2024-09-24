@@ -25,13 +25,14 @@ export async function generateMetadata({ params }: any) {
   const { title, description } = data.responseObject.splat;
   const { logo_url } = data.responseObject.company;
   const logo = logo_url !== '' ? logo_url : '/greenview.jpeg';
-
+  const metaTitle = title || 'Green View';
+  const metaDescription = description || '3D models viewer';
   return {
-    title: title,
-    description: description,
+    title: metaTitle,
+    description: metaDescription,
     openGraph: {
-      title: title,
-      description: description,
+      title: metaTitle,
+      description: metaDescription,
       images: [
         {
           url: logo,
