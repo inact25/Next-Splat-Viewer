@@ -15,6 +15,7 @@ import {
   Row,
   Select,
   Space,
+  Switch,
   Table,
   Upload,
   UploadProps,
@@ -98,6 +99,7 @@ const Splat = ({ url }: any) => {
         thumbnail_id: thumbnailFile?.responseObject?.id ?? null,
         company_id: Number(companyId),
         is_animated: values.is_animated,
+        disable_drag: values.disable_drag,
       });
       message.success('File Registered successfully');
       handleRefetch();
@@ -233,6 +235,7 @@ const Splat = ({ url }: any) => {
       description: values.description,
       is_animated: values.is_animated,
       company_id: Number(companyId),
+      disable_drag: values.disable_drag,
     };
 
     if (values.file) {
@@ -257,7 +260,7 @@ const Splat = ({ url }: any) => {
 
     try {
       setLoading(true);
-      const response = await http.editSplat(payload);
+      await http.editSplat(payload);
       message.success('File Registered successfully');
       handleRefetch();
       setEditingFile(null);
@@ -426,6 +429,17 @@ const Splat = ({ url }: any) => {
                     </p>
                   </Dragger>
                 </Form.Item>
+                <Form.Item
+                  name="disable_drag"
+                  label="Disable Drag"
+                  valuePropName="checked"
+                >
+                  <Switch
+                    defaultChecked
+                    checkedChildren={<span className="text-white">Yes</span>}
+                    unCheckedChildren={<span className="text-white">No</span>}
+                  />
+                </Form.Item>
               </Col>
               <Col lg={16}>
                 <Form.Item
@@ -447,24 +461,6 @@ const Splat = ({ url }: any) => {
                 >
                   <Input.TextArea rows={5} placeholder="Description" />
                 </Form.Item>
-                {/*<Form.Item*/}
-
-                {/*  valuePropName={'checked'}*/}
-                {/*  style={{ fontWeight: 'bold', fontSize: 18, marginTop: -12 }}*/}
-                {/*  label={'Enable Animation'}*/}
-                {/*  name={'is_animated'}*/}
-                {/*  rules={[*/}
-                {/*    { required: true, message: 'Please set Animation Status!' },*/}
-                {/*  ]}*/}
-                {/*>*/}
-                {/*  <Switch*/}
-                {/*    style={{ marginTop: -10 }}*/}
-                {/*    checkedChildren="Enable"*/}
-                {/*    unCheckedChildren="Disable"*/}
-                {/*    defaultChecked*/}
-                {/*    defaultValue={true}*/}
-                {/*  />*/}
-                {/*</Form.Item>*/}
               </Col>
             </Row>
 
@@ -558,6 +554,17 @@ const Splat = ({ url }: any) => {
                     </Button>
                   )}
                 </Form.Item>
+                <Form.Item
+                  name="disable_drag"
+                  label="Disable Drag"
+                  valuePropName="checked"
+                >
+                  <Switch
+                    defaultChecked
+                    checkedChildren={<span className="text-white">Yes</span>}
+                    unCheckedChildren={<span className="text-white">No</span>}
+                  />
+                </Form.Item>
               </Col>
               <Col lg={16}>
                 <Form.Item
@@ -579,23 +586,6 @@ const Splat = ({ url }: any) => {
                 >
                   <Input.TextArea rows={5} placeholder="Description" />
                 </Form.Item>
-                {/*<Form.Item*/}
-                {/*  valuePropName={'checked'}*/}
-                {/*  style={{ fontWeight: 'bold', fontSize: 18, marginTop: -16 }}*/}
-                {/*  label={'Enable Animation'}*/}
-                {/*  name={'is_animated'}*/}
-                {/*  rules={[*/}
-                {/*    { required: true, message: 'Please set Animation Status!' },*/}
-                {/*  ]}*/}
-                {/*>*/}
-                {/*  <Switch*/}
-                {/*    style={{ marginTop: -10 }}*/}
-                {/*    checkedChildren="Enable"*/}
-                {/*    unCheckedChildren="Disable"*/}
-                {/*    defaultChecked*/}
-                {/*    defaultValue={true}*/}
-                {/*  />*/}
-                {/*</Form.Item>*/}
               </Col>
             </Row>
             <Row justify="end">
