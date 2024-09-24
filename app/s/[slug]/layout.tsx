@@ -1,11 +1,7 @@
 import { Inter } from 'next/font/google';
 import '@/app/globals.css';
-import { API_URL } from '@/app/constant/config';
+import { API_URL, FRONTEND_URL } from '@/app/constant/config';
 
-// export const metadata: Metadata = {
-//   title: 'Greenview - Viewer ',
-//   description: 'Greenview - Viewer',
-// };
 const inter = Inter({ subsets: ['latin'] });
 
 const getData = async (slug: string) => {
@@ -24,7 +20,7 @@ export async function generateMetadata({ params }: any) {
 
   const { title, description } = data.responseObject.splat;
   const { logo_url } = data.responseObject.company;
-  const logo = logo_url !== '' ? logo_url : '/greenview.jpeg';
+  const logo = logo_url !== '' ? logo_url : `${FRONTEND_URL}/greenview.jpeg`;
   const metaTitle = title || 'Green View';
   const metaDescription = description || '3D models viewer';
   return {
@@ -42,7 +38,7 @@ export async function generateMetadata({ params }: any) {
         },
       ],
       type: 'website',
-      url: `https://${process.env.NEXT_PUBLIC_API_URL}/s/${params.slug}`,
+      url: `${FRONTEND_URL}/s/${params.slug}`,
     },
     icons: {
       icon: logo,
