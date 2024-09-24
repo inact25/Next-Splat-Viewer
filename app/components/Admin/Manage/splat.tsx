@@ -11,6 +11,7 @@ import {
   Input,
   message,
   Modal,
+  Popconfirm,
   Row,
   Select,
   Space,
@@ -183,11 +184,12 @@ const Splat = ({ url }: any) => {
             icon={<EditFilled />}
             onClick={() => setEditingFile(record)}
           />
-          <Button
-            danger
-            icon={<DeleteFilled />}
-            onClick={() => handleRemove(record.id)}
-          />
+          <Popconfirm
+            title="Are you sure?"
+            onConfirm={() => handleRemove(record.id)}
+          >
+            <Button icon={<DeleteFilled />} />
+          </Popconfirm>
         </Space>
       ),
     },
