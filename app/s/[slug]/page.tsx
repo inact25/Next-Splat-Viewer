@@ -26,7 +26,6 @@ const Page = async (props: any) => {
     data.responseObject.splat;
   const { logo_url } = data.responseObject.company;
   const logo = logo_url !== '' ? logo_url : '/greenview.jpeg';
-  console.log(storage_url, is_animated, title, description);
   return (
     <>
       <Head>
