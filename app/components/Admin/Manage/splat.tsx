@@ -1,10 +1,28 @@
 'use client';
 
 import httpClient from '@/app/actions/httpClient';
-import {ListFilesResponse} from '@/app/actions/http';
-import React, {useEffect, useState} from 'react';
-import {Button, Card, Col, Form, Input, message, Modal, Row, Select, Space, Table, Upload, UploadProps,} from 'antd';
-import {CloudUploadOutlined, DeleteFilled, EditFilled} from '@ant-design/icons';
+import { ListFilesResponse } from '@/app/actions/http';
+import React, { useEffect, useState } from 'react';
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  Input,
+  message,
+  Modal,
+  Row,
+  Select,
+  Space,
+  Table,
+  Upload,
+  UploadProps,
+} from 'antd';
+import {
+  CloudUploadOutlined,
+  DeleteFilled,
+  EditFilled,
+} from '@ant-design/icons';
 import axios from 'axios';
 import GaussianSplat from '@/app/components/GaussianSplat';
 
@@ -19,7 +37,7 @@ const Splat = ({ url }: any) => {
   const [editingFile, setEditingFile] = useState<ListFilesResponse | null>(
     null,
   );
-  const [params, setParams] = useState({ limit: 10, page: 1, company_id: 0 });
+  const [params, setParams] = useState({ limit: 5, page: 1, company_id: 0 });
 
   const props: UploadProps = {
     name: 'file',
@@ -90,7 +108,6 @@ const Splat = ({ url }: any) => {
       setLoading(false);
     }
   };
-
 
   const http = httpClient(url);
   const [listSplat, setListSplat] = useState<ListFilesResponse[]>([]);
@@ -195,17 +212,17 @@ const Splat = ({ url }: any) => {
       setLoading(true);
       const res = await http.switchAnimate({
         id: recordData.id,
-        is_animated: isAnimate
+        is_animated: isAnimate,
       });
       message.success('Animated Switch successfully');
-      setSplatData(res.responseObject)
+      setSplatData(res.responseObject);
       // getData(recordData.slug);
     } catch (error) {
       message.error('Animated Switch failed');
     } finally {
       setLoading(false);
     }
-  }
+  };
   const handleEdit = async (values: any, purpose?: string) => {
     let payload: any = {
       id: editingFile?.id,
@@ -219,16 +236,20 @@ const Splat = ({ url }: any) => {
       const splatFile = await http.fileUploader(values.file.file);
       payload.storage_id = Number(splatFile.responseObject.id);
     } else {
-      payload.storage_id = editingFile?.storage_id ? Number(editingFile?.storage_id) : editingFile?.storage_id;
+      payload.storage_id = editingFile?.storage_id
+        ? Number(editingFile?.storage_id)
+        : editingFile?.storage_id;
     }
 
     if (values.thumbnail) {
       const thumbnailFile = await http.fileUploader(values.thumbnail.file);
       payload.thumbnail_id = thumbnailFile.responseObject.id
         ? Number(thumbnailFile.responseObject.id)
-        : thumbnailFile.responseObject.id
+        : thumbnailFile.responseObject.id;
     } else {
-      payload.thumbnail_id = editingFile?.thumbnail_id ? Number(editingFile?.thumbnail_id) : editingFile?.thumbnail_id;
+      payload.thumbnail_id = editingFile?.thumbnail_id
+        ? Number(editingFile?.thumbnail_id)
+        : editingFile?.thumbnail_id;
     }
 
     try {
@@ -267,10 +288,20 @@ const Splat = ({ url }: any) => {
     }
   };
 
+  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+    setParams({
+      ...params,
+      page: pagination.current,
+      limit: pagination.pageSize,
+    });
+  };
+
   useEffect(() => {
     loadCompany();
-    loadList(companyData);
   }, [refetch]);
+  useEffect(() => {
+    loadList(companyData);
+  }, [refetch, companyData, params]);
   useEffect(() => {
     if (editingFile) {
       editForm.setFieldsValue({
@@ -279,8 +310,6 @@ const Splat = ({ url }: any) => {
       });
     }
   }, [editingFile]);
-
-  console.log("rec", recordData)
 
   return (
     <>
@@ -332,7 +361,15 @@ const Splat = ({ url }: any) => {
           scroll={{
             x: 768,
           }}
-          pagination={false}
+          onChange={handleTableChange}
+          pagination={{
+            pageSize: params.limit,
+            total: listSplat.length,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} of ${total} items`,
+          }}
         />
         <Modal
           title="Add Splat"
@@ -342,11 +379,15 @@ const Splat = ({ url }: any) => {
         >
           <Form
             form={form}
-            initialValues={{is_animated: false}}
+            initialValues={{ is_animated: false }}
             onFinish={handleCreate}
             layout="vertical"
           >
-            <Form.Item style={{ fontWeight: 500 }} name="file" label="Upload Gausian Splat File">
+            <Form.Item
+              style={{ fontWeight: 500 }}
+              name="file"
+              label="Upload Gausian Splat File"
+            >
               <Dragger {...props}>
                 <p className="ant-upload-drag-icon">
                   <CloudUploadOutlined />
@@ -361,7 +402,9 @@ const Splat = ({ url }: any) => {
               </Dragger>
             </Form.Item>
             <hr style={{ marginBottom: '1rem' }} />
-            <div className="font-medium mb-4">Upload Thumbnail and Fill the Data</div>
+            <div className="font-medium mb-4">
+              Upload Thumbnail and Fill the Data
+            </div>
 
             <Row gutter={[16, 16]}>
               <Col lg={8}>
@@ -383,14 +426,19 @@ const Splat = ({ url }: any) => {
               <Col lg={16}>
                 <Form.Item
                   name="title"
-                  rules={[{ required: true, message: 'Please input the title!' }]}
+                  rules={[
+                    { required: true, message: 'Please input the title!' },
+                  ]}
                 >
                   <Input placeholder="Title" />
                 </Form.Item>
                 <Form.Item
                   name="description"
                   rules={[
-                    { required: true, message: 'Please input the description!' },
+                    {
+                      required: true,
+                      message: 'Please input the description!',
+                    },
                   ]}
                 >
                   <Input.TextArea rows={5} placeholder="Description" />
@@ -433,11 +481,15 @@ const Splat = ({ url }: any) => {
         >
           <Form
             form={editForm}
-            initialValues={{is_animated: false}}
+            initialValues={{ is_animated: false }}
             onFinish={handleEdit}
             layout="vertical"
           >
-            <Form.Item style={{ fontWeight: 500 }} name="file" label="Upload Gausian Splat File">
+            <Form.Item
+              style={{ fontWeight: 500 }}
+              name="file"
+              label="Upload Gausian Splat File"
+            >
               <Dragger {...props}>
                 <p className="ant-upload-drag-icon">
                   <CloudUploadOutlined />
@@ -452,7 +504,9 @@ const Splat = ({ url }: any) => {
               </Dragger>
             </Form.Item>
             <hr style={{ marginBottom: '1rem' }} />
-            <div className="font-medium mb-4">Upload Thumbnail and Fill the Data</div>
+            <div className="font-medium mb-4">
+              Upload Thumbnail and Fill the Data
+            </div>
             <Row gutter={[16, 16]}>
               <Col lg={8}>
                 <Form.Item name="thumbnail">
@@ -504,14 +558,19 @@ const Splat = ({ url }: any) => {
               <Col lg={16}>
                 <Form.Item
                   name="title"
-                  rules={[{ required: true, message: 'Please input the title!' }]}
+                  rules={[
+                    { required: true, message: 'Please input the title!' },
+                  ]}
                 >
                   <Input placeholder="Title" />
                 </Form.Item>
                 <Form.Item
                   name="description"
                   rules={[
-                    { required: true, message: 'Please input the description!' },
+                    {
+                      required: true,
+                      message: 'Please input the description!',
+                    },
                   ]}
                 >
                   <Input.TextArea rows={5} placeholder="Description" />
@@ -549,12 +608,12 @@ const Splat = ({ url }: any) => {
             title="Generate World Script"
             open={!!Object.keys(recordData)?.length}
             onOk={() => {
-              setRecordData({})
-              setSplatData(null)
+              setRecordData({});
+              setSplatData(null);
             }}
             onCancel={() => {
-              setRecordData({})
-              setSplatData(null)
+              setRecordData({});
+              setSplatData(null);
             }}
           >
             <div
@@ -579,7 +638,7 @@ const Splat = ({ url }: any) => {
                             <Button
                               className={`${!splatData?.splat?.is_animated ? '!bg-green-900 !text-white' : '!bg-white text-green-900'} font-bold `}
                               onClick={() => {
-                                handleSwitch(false)
+                                handleSwitch(false);
                                 setSplatData(null);
                               }}
                             >
@@ -590,7 +649,7 @@ const Splat = ({ url }: any) => {
                             <Button
                               className={`${splatData?.splat?.is_animated ? '!bg-green-900 !text-white' : '!bg-white text-green-900'} font-bold `}
                               onClick={() => {
-                                handleSwitch(true)
+                                handleSwitch(true);
                                 setSplatData(null);
                               }}
                             >
@@ -623,7 +682,8 @@ const Splat = ({ url }: any) => {
             <h5 style={{ fontWeight: 600, marginBottom: '.5rem' }}>
               Private Url
             </h5>
-            <div className='w-full'
+            <div
+              className="w-full"
               style={{
                 marginBottom: '2rem',
                 display: 'flex',
@@ -631,7 +691,7 @@ const Splat = ({ url }: any) => {
                 justifyContent: 'space-between',
               }}
             >
-              <div className='w-full'>
+              <div className="w-full">
                 <Input
                   width={'100%'}
                   disabled
@@ -668,7 +728,7 @@ const Splat = ({ url }: any) => {
                 justifyContent: 'space-between',
               }}
             >
-              <div className='w-full'>
+              <div className="w-full">
                 <Input
                   disabled
                   value={`https://${window.location.hostname}/s/${recordData.slug}`}
