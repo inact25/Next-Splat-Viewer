@@ -62,6 +62,12 @@ const Companies = ({ url }: any) => {
   const [refetch, setRefetch] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const handleRemoveModal = (id: number) => {
+    Modal.confirm({
+      title: 'Are you sure you want to delete this company?',
+      onOk: () => handleRemove(id),
+    });
+  };
   const columns = [
     {
       title: 'ID',
@@ -134,7 +140,7 @@ const Companies = ({ url }: any) => {
           <Button
             danger
             icon={<DeleteFilled />}
-            onClick={() => handleRemove(record.id)}
+            onClick={() => handleRemoveModal(record.id)}
           />
         </Space>
       ),
