@@ -4,8 +4,8 @@ import React from 'react';
 import ProviderLayout from '@/app/components/ProviderLayout';
 
 export const metadata: Metadata = {
-  icons: '/ico.png',
-  title: 'VISIONSHIFT - Admin',
+  icons: '/greenview.jpeg',
+  title: 'Greenview',
   description: 'Experience your world in a whole new light.',
 };
 
