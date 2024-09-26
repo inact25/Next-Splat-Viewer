@@ -11,7 +11,6 @@ import {
   Input,
   message,
   Modal,
-  Popconfirm,
   Row,
   Select,
   Space,
@@ -120,6 +119,12 @@ const Splat = ({ url }: any) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [splatData, setSplatData] = useState<any>();
+  const handleRemoveModal = (id: number) => {
+    Modal.confirm({
+      title: 'Are you sure you want to delete this Splat?',
+      onOk: () => handleRemove(id),
+    });
+  };
   const columns = [
     {
       title: 'ID',
@@ -187,12 +192,10 @@ const Splat = ({ url }: any) => {
             icon={<EditFilled />}
             onClick={() => setEditingFile(record)}
           />
-          <Popconfirm
-            title="Are you sure?"
-            onConfirm={() => handleRemove(record.id)}
-          >
-            <Button icon={<DeleteFilled />} />
-          </Popconfirm>
+          <Button
+            onClick={() => handleRemoveModal(record.id)}
+            icon={<DeleteFilled />}
+          />
         </Space>
       ),
     },
