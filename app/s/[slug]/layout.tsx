@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: any) {
   const { title, description } = data.responseObject.splat;
   const { logo_url } = data.responseObject.company;
   const logo = logo_url !== '' ? logo_url : `${FRONTEND_URL}/greenview.jpeg`;
-  const metaTitle = title || 'Green View';
+  const metaTitle = title || 'Greenview';
   const metaDescription = description || '3D models viewer';
   return {
     title: metaTitle,
