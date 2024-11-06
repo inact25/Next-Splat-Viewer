@@ -15,7 +15,7 @@ export default function GaussianSplat({
   className?: string;
   mode?: 'AR' | 'None';
 }) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [rootElementId] = useState(
     `gaussian-splat-viewer-${Math.random().toString(36).substring(2)}`,
   );
