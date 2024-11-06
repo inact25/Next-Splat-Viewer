@@ -2,7 +2,13 @@
 
 import httpClient from '@/app/actions/httpClient';
 import { ListFilesResponse } from '@/app/actions/http';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  CloudUploadOutlined,
+  DeleteFilled,
+  EditFilled,
+  SearchOutlined,
+} from '@ant-design/icons';
 import {
   Button,
   Card,
@@ -11,7 +17,6 @@ import {
   Input,
   message,
   Modal,
-  Popconfirm,
   Row,
   Select,
   Space,
@@ -20,13 +25,9 @@ import {
   Upload,
   UploadProps,
 } from 'antd';
-import {
-  CloudUploadOutlined,
-  DeleteFilled,
-  EditFilled,
-} from '@ant-design/icons';
 import axios from 'axios';
 import GaussianSplat from '@/app/components/GaussianSplat';
+import { debounce } from 'next/dist/server/utils';
 
 const { Dragger } = Upload;
 const Splat = ({ url }: any) => {
@@ -39,8 +40,14 @@ const Splat = ({ url }: any) => {
   const [editingFile, setEditingFile] = useState<ListFilesResponse | null>(
     null,
   );
-  const [params, setParams] = useState({ limit: 5, page: 1, company_id: 0 });
-
+  const [searchText, setSearchText] = useState<string>('');
+  const [params, setParams] = useState({
+    limit: 5,
+    page: 1,
+    company_id: 0,
+    search: '',
+    sort: 'desc',
+  });
   const props: UploadProps = {
     name: 'file',
     multiple: false,
@@ -120,6 +127,12 @@ const Splat = ({ url }: any) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [splatData, setSplatData] = useState<any>();
+  const handleRemoveModal = (id: number) => {
+    Modal.confirm({
+      title: 'Are you sure you want to delete this Splat?',
+      onOk: () => handleRemove(id),
+    });
+  };
   const columns = [
     {
       title: 'ID',
@@ -130,6 +143,7 @@ const Splat = ({ url }: any) => {
       title: 'Title',
       dataIndex: 'title',
       key: 'title',
+      sorter: true,
     },
     {
       title: 'Description',
@@ -187,12 +201,10 @@ const Splat = ({ url }: any) => {
             icon={<EditFilled />}
             onClick={() => setEditingFile(record)}
           />
-          <Popconfirm
-            title="Are you sure?"
-            onConfirm={() => handleRemove(record.id)}
-          >
-            <Button icon={<DeleteFilled />} />
-          </Popconfirm>
+          <Button
+            onClick={() => handleRemoveModal(record.id)}
+            icon={<DeleteFilled />}
+          />
         </Space>
       ),
     },
@@ -286,21 +298,42 @@ const Splat = ({ url }: any) => {
     setCompanyToken(body?.company_token);
     setLoading(true);
     try {
-      const response = await http.listSplat({ ...params, ...body });
+      const response = await http.listSplat({
+        ...params,
+        ...body,
+        search: body.search || searchText,
+      });
       setListSplat(response.responseObject);
       setTotalSplat(response?.total ?? 0);
     } catch (error) {
+      console.error('Error loading list:', error);
     } finally {
       setLoading(false);
     }
   };
 
+  const debouncedSearch = useCallback(
+    debounce((value: string) => {
+      setParams((prev) => ({ ...prev, search: value, page: 1 }));
+      loadList({ ...companyData, search: value });
+    }, 500),
+    [companyData],
+  );
+
+  // Handle search input change
+  const handleSearch = (value: string) => {
+    setSearchText(value);
+    debouncedSearch(value);
+  };
+
   const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-    setParams({
+    const newParams = {
       ...params,
       page: pagination.current,
       limit: pagination.pageSize,
-    });
+      sort: sorter.order === 'ascend' ? 'asc' : 'desc',
+    };
+    setParams(newParams);
   };
 
   useEffect(() => {
@@ -323,18 +356,21 @@ const Splat = ({ url }: any) => {
       <Select
         style={{ marginBottom: 16 }}
         onChange={(e) => {
-          setCompanyData({
+          const newCompanyData = {
             company_id: e,
             company_token: listCompany?.find((data: any) => data.id === e)
               ?.token,
             company_name: listCompany
               ?.find((data: any) => data.id === e)
               ?.name?.replaceAll(' ', '_'),
-          });
+          };
+          setCompanyData(newCompanyData);
+          // Reset search when changing company
+          setSearchText('');
+          setParams((prev) => ({ ...prev, search: '', page: 1 }));
           loadList({
-            company_id: e,
-            company_token: listCompany?.find((data: any) => data.id === e)
-              ?.token,
+            ...newCompanyData,
+            search: '',
           });
         }}
         placeholder={'Select Company'}
@@ -360,17 +396,25 @@ const Splat = ({ url }: any) => {
           </>
         }
       >
+        <div style={{ marginBottom: 16 }}>
+          <Input
+            placeholder="Search by title or description"
+            prefix={<SearchOutlined />}
+            value={searchText}
+            onChange={(e) => handleSearch(e.target.value)}
+            allowClear
+          />
+        </div>
         <Table
           columns={columns}
           dataSource={listSplat}
           loading={loading}
           rowKey={(record) => record.id.toString()}
-          scroll={{
-            x: 768,
-          }}
+          scroll={{ x: 768 }}
           onChange={handleTableChange}
           pagination={{
             pageSize: params.limit,
+            current: params.page,
             total: totalSplat,
             showSizeChanger: true,
             showQuickJumper: true,
