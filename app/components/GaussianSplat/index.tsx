@@ -13,7 +13,6 @@ export default function GaussianSplat({
   isAnimate?: boolean;
   thumbnail?: string;
   className?: string;
-  mode?: 'AR' | 'None';
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const [rootElementId] = useState(
