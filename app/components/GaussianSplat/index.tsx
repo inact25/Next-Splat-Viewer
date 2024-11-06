@@ -1,7 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import * as GaussianSplats3D from '@mkkellogg/gaussian-splats-3d';
-import { Camera } from 'three';
 import Image from 'next/image';
 
 export default function GaussianSplat({
@@ -9,21 +8,47 @@ export default function GaussianSplat({
   isAnimate,
   thumbnail,
   className,
-  mode = 'None',
-  disable_drag = false,
 }: {
   src: string;
-  camera?: Camera;
   isAnimate?: boolean;
   thumbnail?: string;
   className?: string;
   mode?: 'AR' | 'None';
-  disable_drag?: boolean;
 }) {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [rootElementId] = useState(
     `gaussian-splat-viewer-${Math.random().toString(36).substring(2)}`,
   );
+
+  const setControlParameters = (
+    controls: {
+      minZoom: number;
+      maxZoom: number;
+      minDistance: number;
+      maxDistance: number;
+      minPolarAngle: number;
+      maxPolarAngle: number;
+      minAzimuthAngle: number;
+      maxAzimuthAngle: number;
+    },
+    isOrthographic: any,
+  ) => {
+    if (isOrthographic) {
+      controls.minZoom = 5.0;
+      controls.maxZoom = 1.5;
+    } else {
+      controls.minDistance = 10.0;
+      controls.maxDistance = 100.0;
+    }
+
+    // Vertical rotation
+    controls.minPolarAngle = 0;
+    controls.maxPolarAngle = Math.PI;
+
+    // Horizontal rotation
+    controls.minAzimuthAngle = -Infinity;
+    controls.maxAzimuthAngle = Infinity;
+  };
 
   useEffect(() => {
     const rootElement = document.getElementById(rootElementId);
@@ -37,58 +62,36 @@ export default function GaussianSplat({
       cameraUp: [0, -1, 0],
       initialCameraPosition: [-8, -2, -4],
       initialCameraLookAt: [0, 0, 0],
-      sphericalHarmonicsDegree: 2,
+      // sphericalHarmonicsDegree: 2,
       rootElement: rootElement,
-      webXRMode:
-        mode === 'AR'
-          ? GaussianSplats3D.WebXRMode.AR
-          : GaussianSplats3D.WebXRMode.None,
-      sharedMemoryForWorkers: false,
       sceneRevealMode: !isAnimate
         ? GaussianSplats3D.SceneRevealMode.Instant
         : GaussianSplats3D.SceneRevealMode.Gradual,
-      useBuiltInControls: true,
-      orthographicControls: {
-        enablePan: !disable_drag,
-      },
-      perspectiveControls: {
-        enablePan: !disable_drag,
-      },
+      selfDrivenMode: false,
+      antialiased: true,
+      focalAdjustment: 20,
+      renderMode: GaussianSplats3D.RenderMode.OnChange,
     });
 
     viewer
       .addSplatScene(src, {
-        position: [0, 2.5, 0],
+        position: [0, 3, 0],
         streamView: true,
-        showLoadingUI: false,
+        showLoadingUI: true,
+        splatAlphaRemovalThreshold: 20,
       })
       .then(() => {
-        // Only stop listening to key events if mode is not AR
-        if (mode !== 'AR') {
-          let perspective = false;
-          let orthographic = false;
-          if (viewer.perspectiveControls) {
-            viewer.perspectiveControls.stopListenToKeyEvents();
-            viewer.perspectiveControls.enablePan = false;
-            perspective = true;
-          }
-          if (viewer.orthographicControls) {
-            viewer.orthographicControls.stopListenToKeyEvents();
-            viewer.orthographicControls.enablePan = false;
-            orthographic = true;
-          }
-          if (perspective && orthographic) {
-            viewer.start();
-            setTimeout(() => {
-              setIsLoading(false);
-            }, 2000);
-          }
-          return;
-        }
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 2000);
+        requestAnimationFrame(update);
+        setControlParameters(viewer.perspectiveControls, false);
+        setControlParameters(viewer.orthographicControls, true);
+        viewer.start();
       });
+
+    function update() {
+      requestAnimationFrame(update);
+      viewer.update();
+      viewer.render();
+    }
 
     return () => {
       viewer.stop();
