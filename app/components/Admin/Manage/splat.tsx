@@ -46,6 +46,7 @@ const Splat = ({ url }: any) => {
     page: 1,
     company_id: 0,
     search: '',
+    sort: 'desc',
   });
   const props: UploadProps = {
     name: 'file',
@@ -142,6 +143,7 @@ const Splat = ({ url }: any) => {
       title: 'Title',
       dataIndex: 'title',
       key: 'title',
+      sorter: true,
     },
     {
       title: 'Description',
@@ -329,9 +331,9 @@ const Splat = ({ url }: any) => {
       ...params,
       page: pagination.current,
       limit: pagination.pageSize,
+      sort: sorter.order === 'ascend' ? 'asc' : 'desc',
     };
     setParams(newParams);
-    loadList({ ...companyData, ...newParams });
   };
 
   useEffect(() => {
@@ -408,9 +410,7 @@ const Splat = ({ url }: any) => {
           dataSource={listSplat}
           loading={loading}
           rowKey={(record) => record.id.toString()}
-          scroll={{
-            x: 768,
-          }}
+          scroll={{ x: 768 }}
           onChange={handleTableChange}
           pagination={{
             pageSize: params.limit,

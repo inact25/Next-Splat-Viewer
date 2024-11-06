@@ -190,16 +190,19 @@ const httpClient = (baseUrl: string, token?: string) => {
     page,
     company_id,
     search, // Add search parameter
+    sort,
   }: {
     limit: number;
     page: number;
     company_id: number;
     search?: string;
+    sort?: 'desc' | 'asc';
   }): Promise<CommonResponse<ListCompaniesResponse[]>> => {
     const urlParams: string = objectToUrlParams({
       limit,
       page,
       company_id,
+      sort,
       search: search || '', // Include search in URL params
     });
     return axiosClient
