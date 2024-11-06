@@ -21,7 +21,7 @@ const getData = async (slug: string) => {
 const Page = async (props: any) => {
   const { params } = props;
   const data = await getData(params.slug);
-  const { storage_url, is_animated, disable_drag } = data.responseObject.splat;
+  const { storage_url, is_animated } = data.responseObject.splat;
   const { logo_url } = data.responseObject.company;
   return (
     <>
@@ -30,8 +30,6 @@ const Page = async (props: any) => {
           src={storage_url}
           isAnimate={is_animated}
           thumbnail={logo_url}
-          mode={'None'}
-          disable_drag={disable_drag}
         />
       )}
     </>
