@@ -189,12 +189,19 @@ const httpClient = (baseUrl: string, token?: string) => {
     limit,
     page,
     company_id,
+    search, // Add search parameter
   }: {
     limit: number;
     page: number;
     company_id: number;
+    search?: string;
   }): Promise<CommonResponse<ListCompaniesResponse[]>> => {
-    const urlParams: string = objectToUrlParams({ limit, page, company_id });
+    const urlParams: string = objectToUrlParams({
+      limit,
+      page,
+      company_id,
+      search: search || '', // Include search in URL params
+    });
     return axiosClient
       .get(`/splat/list?${urlParams}`)
       .then((response) => response.data);
