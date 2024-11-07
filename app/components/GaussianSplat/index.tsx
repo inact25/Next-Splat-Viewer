@@ -66,7 +66,7 @@ export default function GaussianSplat({
       sceneRevealMode: !isAnimate
         ? GaussianSplats3D.SceneRevealMode.Instant
         : GaussianSplats3D.SceneRevealMode.Gradual,
-      selfDrivenMode: true,
+      selfDrivenMode: false,
       antialiased: true,
       focalAdjustment: 20,
       renderMode: GaussianSplats3D.RenderMode.OnChange,
@@ -83,7 +83,6 @@ export default function GaussianSplat({
         requestAnimationFrame(update);
         setControlParameters(viewer.perspectiveControls, false);
         setControlParameters(viewer.orthographicControls, true);
-        viewer.start();
       });
 
     function update() {
