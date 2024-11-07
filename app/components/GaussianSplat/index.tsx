@@ -61,7 +61,7 @@ export default function GaussianSplat({
       cameraUp: [0, -1, 0],
       initialCameraPosition: [-8, -2, -4],
       initialCameraLookAt: [0, 0, 0],
-      // sphericalHarmonicsDegree: 2,
+      sphericalHarmonicsDegree: 2,
       rootElement: rootElement,
       sceneRevealMode: !isAnimate
         ? GaussianSplats3D.SceneRevealMode.Instant
@@ -69,7 +69,7 @@ export default function GaussianSplat({
       selfDrivenMode: false,
       antialiased: true,
       focalAdjustment: 20,
-      renderMode: GaussianSplats3D.RenderMode.OnChange,
+      sharedMemoryForWorkers: false,
     });
 
     viewer
@@ -83,6 +83,9 @@ export default function GaussianSplat({
         requestAnimationFrame(update);
         setControlParameters(viewer.perspectiveControls, false);
         setControlParameters(viewer.orthographicControls, true);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 3000);
       });
 
     function update() {
