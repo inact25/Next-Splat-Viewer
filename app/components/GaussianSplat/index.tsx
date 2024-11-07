@@ -37,7 +37,7 @@ export default function GaussianSplat({
       controls.maxZoom = 1;
     } else {
       controls.minDistance = 5.5;
-      controls.maxDistance = 25;
+      controls.maxDistance = 14;
     }
 
     // Vertical rotation
