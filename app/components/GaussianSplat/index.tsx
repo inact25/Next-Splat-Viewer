@@ -66,7 +66,7 @@ export default function GaussianSplat({
       sceneRevealMode: !isAnimate
         ? GaussianSplats3D.SceneRevealMode.Instant
         : GaussianSplats3D.SceneRevealMode.Gradual,
-      selfDrivenMode: false,
+      selfDrivenMode: true,
       antialiased: true,
       focalAdjustment: 20,
       renderMode: GaussianSplats3D.RenderMode.OnChange,
@@ -76,7 +76,7 @@ export default function GaussianSplat({
       .addSplatScene(src, {
         position: [0, 3, 0],
         streamView: true,
-        showLoadingUI: true,
+        showLoadingUI: false,
         splatAlphaRemovalThreshold: 20,
       })
       .then(() => {
@@ -91,10 +91,6 @@ export default function GaussianSplat({
       viewer.update();
       viewer.render();
     }
-
-    return () => {
-      viewer.stop();
-    };
   }, [rootElementId, src]);
 
   return (
