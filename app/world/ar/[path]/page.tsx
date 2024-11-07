@@ -40,7 +40,6 @@ const Page = async (props: any) => {
           src={storage_url}
           isAnimate={is_animated}
           thumbnail={logo_url}
-          mode={'AR'}
         />
       </>
     );
