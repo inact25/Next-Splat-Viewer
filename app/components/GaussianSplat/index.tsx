@@ -33,11 +33,11 @@ export default function GaussianSplat({
     isOrthographic: any,
   ) => {
     if (isOrthographic) {
-      controls.minZoom = 5.0;
-      controls.maxZoom = 1.5;
+      controls.minZoom = 4;
+      controls.maxZoom = 1;
     } else {
-      controls.minDistance = 10.0;
-      controls.maxDistance = 100.0;
+      controls.minDistance = 5.5;
+      controls.maxDistance = 25;
     }
 
     // Vertical rotation
