@@ -59,9 +59,8 @@ export default function GaussianSplat({
     }
     const viewer = new GaussianSplats3D.Viewer({
       cameraUp: [0, -1, 0],
-      initialCameraPosition: [-8, -2, -4],
+      initialCameraPosition: [-20, -3, -4],
       initialCameraLookAt: [0, 0, 0],
-      sphericalHarmonicsDegree: 2,
       rootElement: rootElement,
       sceneRevealMode: !isAnimate
         ? GaussianSplats3D.SceneRevealMode.Instant
@@ -70,6 +69,7 @@ export default function GaussianSplat({
       antialiased: true,
       focalAdjustment: 20,
       sharedMemoryForWorkers: false,
+      halfPrecisionCovariancesOnGPU: true,
     });
 
     viewer
@@ -78,6 +78,8 @@ export default function GaussianSplat({
         streamView: true,
         showLoadingUI: false,
         splatAlphaRemovalThreshold: 20,
+        progressiveLoad: true,
+        optimizeSplatData: true,
       })
       .then(() => {
         requestAnimationFrame(update);
